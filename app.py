@@ -30,6 +30,7 @@ def webhook():
 # Update shirt size in database
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
+  data = request.get_json()
   log('Recieved {}'.format(data))
   return "ok", 200
 
