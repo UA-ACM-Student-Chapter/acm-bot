@@ -30,3 +30,8 @@ def send_slack_message(channel, message):
   )
 
 # send_slack_message('#webteam', 'Hi')
+
+# Debug
+def log(msg):
+  print(str(msg))
+  sys.stdout.flush()
