@@ -18,7 +18,8 @@ sc = SlackClient(slack_token)
 def webhook():
   data = request.get_json()
   log('Recieved {}'.format(data))
-  return data['challenge'], 200
+  send_slack_message(data['channel'], "Hello")
+  return "ok", 200
 
 
 # Simple wrapper for sending a Slack message
