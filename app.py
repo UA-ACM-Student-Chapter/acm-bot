@@ -13,15 +13,14 @@ slack_token = os.environ["SLACK_BOT_TOKEN"]
 bot_name = os.environ["BOT_NAME"]
 sc = SlackClient(slack_token)
 
-
 # Webhook for all requests
 @app.route('/', methods=['POST'])
 def webhook():
   data = request.get_json()
   log('Recieved {}'.format(data))
   event = data['event']
-  if (event.get('type') == 'message' and event.get('username') != bot_name):
-    if ('shirt' in event.get('text') or 'size' in event.get('text')):
+  if (event['type'] == 'message' and ('username' in event and event['username'] != bot_name)):
+    if ('shirt' in event['text'] or 'size' in event['text']):
       update_shirt_prompt(event['channel'])
     else:
       send_slack_message(event['channel'], "Hello")
