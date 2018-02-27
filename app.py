@@ -20,7 +20,7 @@ def webhook():
   data = request.get_json()
   log('Recieved {}'.format(data))
   event = data['event']
-  if (event['username'] != bot_name)
+  if (event['username'] != bot_name):
     send_slack_message(event['channel'], "Hello")
   return "ok", 200
 
