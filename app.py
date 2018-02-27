@@ -22,9 +22,15 @@ def webhook():
   event = data['event']
   if (event.get('type') == 'message' and event.get('username') != bot_name):
     if ('shirt' in event.get('text') or 'size' in event.get('text')):
-      update_shirt_size(event['channel'])
+      update_shirt_prompt(event['channel'])
     else:
       send_slack_message(event['channel'], "Hello")
+  return "ok", 200
+
+# Update shirt size in database
+@app.route('/update_shirt', methods=['POST'])
+def update_shirt():
+  log('Recieved {}'.format(data))
   return "ok", 200
 
 # Simple wrapper for sending a Slack message
@@ -36,7 +42,7 @@ def send_slack_message(channel, message):
   )
 
 # Button-based input for asking shirt size
-def update_shirt_size(channel):
+def update_shirt_prompt(channel):
   return sc.api_call(
     "chat.postMessage",
     channel=channel,
