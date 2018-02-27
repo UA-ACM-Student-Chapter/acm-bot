@@ -33,9 +33,9 @@ def webhook():
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
   # data = request.get_json()
-  data = request.form
-  log('Received {}'.format(data))
-  return data[1]['actions']['value'], 200
+  payload = json.loads(request.form.get("payload"))
+  log('Received {}'.format(payload))
+  return payload["actions"][0].get("value"), 200
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
