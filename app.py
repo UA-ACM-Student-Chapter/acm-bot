@@ -21,9 +21,11 @@ def webhook():
   log('Recieved {}'.format(data))
   event = data['event']
   if (event.get('type') == 'message' and event.get('username') != bot_name):
-    send_slack_message(event['channel'], "Hello")
+    if ('shirt' in event.get('text') or 'size' in event.get('text')):
+      update_shirt_size(event['channel'])
+    else:
+      send_slack_message(event['channel'], "Hello")
   return "ok", 200
-
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
@@ -31,6 +33,60 @@ def send_slack_message(channel, message):
     "chat.postMessage",
     channel=channel,
     text=message
+  )
+
+# Button-based input for asking shirt size
+def update_shirt_size(channel):
+  return sc.api_call(
+    "chat.postMessage",
+    channel=channel,
+    attachments=[
+          {
+            "title": "What's your t-shirt size?",
+            "fallback": "You are unable to choose a t-shirt size",
+            "callback_id": "update_tshirt",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                  "name": "size",
+                  "text": "XS",
+                  "type": "button",
+                  "value": "xs"
+                },
+                {
+                  "name": "size",
+                  "text": "S",
+                  "type": "button",
+                  "value": "s"
+                },
+                {
+                  "name": "size",
+                  "text": "M",
+                  "type": "button",
+                  "value": "m"
+                },
+                {
+                  "name": "size",
+                  "text": "L",
+                  "type": "button",
+                  "value": "l"
+                },
+                {
+                  "name": "size",
+                  "text": "XL",
+                  "type": "button",
+                  "value": "xl"
+                },
+                {
+                  "name": "size",
+                  "text": "XXL",
+                  "type": "button",
+                  "value": "xxl"
+                }
+              ]
+            }
+          ]
   )
 
 # Debug
