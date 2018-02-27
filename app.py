@@ -17,7 +17,7 @@ sc = SlackClient(slack_token)
 @app.route('/', methods=['POST'])
 def webhook():
   data = request.get_json()
-  log('Recieved {}'.format(data))
+  log('Received {}'.format(data))
   event = data['event']
   not_self = True
   if 'username' in event:
@@ -32,8 +32,8 @@ def webhook():
 # Update shirt size in database
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
-  data = request.get_json()
-  log('Recieved {}'.format(data))
+  # data = request.get_json()
+  log('Received {}'.format(request.data))
   return "ok", 200
 
 # Simple wrapper for sending a Slack message
