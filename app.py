@@ -10,6 +10,7 @@ from slackclient import SlackClient
 
 app = Flask(__name__)
 slack_token = os.environ["SLACK_BOT_TOKEN"]
+bot_name = os.environ["BOT_NAME"]
 sc = SlackClient(slack_token)
 
 
@@ -19,7 +20,8 @@ def webhook():
   data = request.get_json()
   log('Recieved {}'.format(data))
   event = data['event']
-  send_slack_message(event['channel'], "Hello")
+  if (event['username'] != bot_name)
+    send_slack_message(event['channel'], "Hello")
   return "ok", 200
 
 
