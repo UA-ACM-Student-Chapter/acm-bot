@@ -20,8 +20,8 @@ def webhook():
   log('Received {}'.format(data))
   event = data['event']
   not_self = True
-  if 'username' in event:
-    not_self = event['username'] != bot_name
+  if 'subtype' in event:
+    not_self = event['subtype'] != 'bot_message'
   if (event['type'] == 'message' and not_self):
     if ('shirt' in event['text'] or 'size' in event['text']):
       update_shirt_prompt(event['channel'])
