@@ -22,8 +22,9 @@ def webhook():
   flag = True
   if 'subtype' in event:
     flag = event['subtype'] not in ['bot_message', 'message_changed']
-  if (event['type'] == 'message' and flag):
-    if ('shirt' in event['text'] or 'size' in event['text']):
+  if event['type'] == 'message' and flag:
+    text = event.get('text')
+    if 'shirt' in text or 'size' in text:
       update_shirt_prompt(event['channel'])
     else:
       send_slack_message(event['channel'], "Hello")
