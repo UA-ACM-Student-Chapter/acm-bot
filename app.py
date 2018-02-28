@@ -36,7 +36,7 @@ def update_shirt():
   payload = json.loads(request.form.get("payload"))
   log('Received {}'.format(payload))
   size = str(payload["actions"][0].get("value"))
-  return "Updated t-shirt size to " + size.upper() + ", congratulations!", 200
+  return "Updated t-shirt size to *" + size.upper() + "*, congratulations!", 200
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
