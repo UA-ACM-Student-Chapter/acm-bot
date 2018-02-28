@@ -23,7 +23,7 @@ def webhook():
   if 'subtype' in event:
     flag = event['subtype'] not in ['bot_message', 'message_changed']
   if event['type'] == 'message' and flag:
-    text = event.get('text')
+    text = str(event.get('text')).lower()
     if 'shirt' in text or 'size' in text:
       update_shirt_prompt(event['channel'])
     else:
