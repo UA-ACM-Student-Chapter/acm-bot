@@ -30,6 +30,9 @@ def webhook():
       send_slack_message(event['channel'], "Hello")
   return "ok", 200
 
+# TODO: add hasPaid functionality
+# TODO: add reminders functionality
+
 # Update shirt size in database
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
@@ -37,6 +40,7 @@ def update_shirt():
   payload = json.loads(request.form.get("payload"))
   log('Received {}'.format(payload))
   size = str(payload["actions"][0].get("value"))
+  # TODO: actually update shirt size lol
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + payload["user"]["name"] + "!", 200
 
 # Simple wrapper for sending a Slack message
