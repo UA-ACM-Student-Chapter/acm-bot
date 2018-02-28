@@ -19,10 +19,10 @@ def webhook():
   data = request.get_json()
   log('Received {}'.format(data))
   event = data['event']
-  not_self = True
+  flag = True
   if 'subtype' in event:
-    not_self = event['subtype'] != 'bot_message'
-  if (event['type'] == 'message' and not_self):
+    flag = event['subtype'] not in ['bot_message', 'message_changed']
+  if (event['type'] == 'message' and flag):
     if ('shirt' in event['text'] or 'size' in event['text']):
       update_shirt_prompt(event['channel'])
     else:
