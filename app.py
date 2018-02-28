@@ -53,52 +53,52 @@ def update_shirt_prompt(channel):
     "chat.postMessage",
     channel=channel,
     attachments=[
+    {
+      "title": "What's your t-shirt size?",
+      "fallback": "You are unable to choose a t-shirt size",
+      "callback_id": "update_tshirt",
+      "color": "#3AA3E3",
+      "attachment_type": "default",
+      "actions": [
           {
-            "title": "What's your t-shirt size?",
-            "fallback": "You are unable to choose a t-shirt size",
-            "callback_id": "update_tshirt",
-            "color": "#3AA3E3",
-            "attachment_type": "default",
-            "actions": [
-                {
-                  "name": "size",
-                  "text": "XS",
-                  "type": "button",
-                  "value": "xs"
-                },
-                {
-                  "name": "size",
-                  "text": "S",
-                  "type": "button",
-                  "value": "s"
-                },
-                {
-                  "name": "size",
-                  "text": "M",
-                  "type": "button",
-                  "value": "m"
-                },
-                {
-                  "name": "size",
-                  "text": "L",
-                  "type": "button",
-                  "value": "l"
-                },
-                {
-                  "name": "size",
-                  "text": "XL",
-                  "type": "button",
-                  "value": "xl"
-                },
-                {
-                  "name": "size",
-                  "text": "XXL",
-                  "type": "button",
-                  "value": "xxl"
-                }
-              ]
-            }
-          ]
+            "name": "size",
+            "text": "XS",
+            "type": "button",
+            "value": "xs"
+          },
+          {
+            "name": "size",
+            "text": "S",
+            "type": "button",
+            "value": "s"
+          },
+          {
+            "name": "size",
+            "text": "M",
+            "type": "button",
+            "value": "m"
+          },
+          {
+            "name": "size",
+            "text": "L",
+            "type": "button",
+            "value": "l"
+          },
+          {
+            "name": "size",
+            "text": "XL",
+            "type": "button",
+            "value": "xl"
+          },
+          {
+            "name": "size",
+            "text": "XXL",
+            "type": "button",
+            "value": "xxl"
+          }
+        ]
+      }
+    ]
   )
 
 # Debug
