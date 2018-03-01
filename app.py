@@ -31,6 +31,7 @@ def webhook():
   return "ok", 200
 
 # TODO: add hasPaid functionality
+
 # TODO: add reminders functionality
 
 # Update shirt size in database
