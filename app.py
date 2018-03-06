@@ -32,9 +32,12 @@ def webhook():
     elif 'paid' in text:
       paid = has_paid(event['user'])
       log(str(paid))
-      send_slack_message(event['channel'], str(paid))
+      if paid == "paid":
+        send_slack_message(event['channel'], 'Yes, you have paid!')
+      else:
+        send_slack_message(event['channel'], "Nope, you haven't yet. Do that at https://goo.gl/pa4MHS.")
     else:
-      send_slack_message(event['channel'], "Hello")
+      send_slack_message(event['channel'], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
   return "ok", 200
 
 # Listener for updating shirt size in database
@@ -125,7 +128,7 @@ def get_email(id):
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(os.environ["API_URL"] + "/member/ispaid", json={"email": email})
-  return paid
+  return paid.text
 
 # TODO: add reminders functionality
 
