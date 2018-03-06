@@ -44,7 +44,7 @@ def update_shirt():
   email = get_email(userid)
 
   # actually update shirt size and return the result
-  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", data={"email": email, "newShirtSize": size.upper()})
+  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper()})
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Simple wrapper for sending a Slack message
