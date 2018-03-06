@@ -23,6 +23,8 @@ def webhook():
   flag = True
   if 'subtype' in event:
     flag = event['subtype'] not in ['bot_message', 'message_changed']
+  if 'username' in event:
+    flag = flag and event['username'] == bot_name
   if event['type'] == 'message' and flag:
     text = str(event.get('text')).lower()
     if 'shirt' in text or 'size' in text:
