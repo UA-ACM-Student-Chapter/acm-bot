@@ -124,7 +124,7 @@ def get_email(id):
       return member["profile"]["email"] 
   return "failure@you"
 
-# TODO: add hasPaid functionality
+# Add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(os.environ["API_URL"] + "/member/ispaid", json={"email": email})
