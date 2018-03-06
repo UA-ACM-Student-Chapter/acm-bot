@@ -30,7 +30,9 @@ def webhook():
     if 'shirt' in text or 'size' in text:
       update_shirt_prompt(event['channel'])
     elif 'paid' in text:
-      send_slack_message(event['channel'], has_paid(event['user']))
+      paid = has_paid(event['user'])
+      log(str(paid))
+      send_slack_message(event['channel'], str(paid))
     else:
       send_slack_message(event['channel'], "Hello")
   return "ok", 200
