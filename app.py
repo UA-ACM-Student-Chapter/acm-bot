@@ -27,15 +27,13 @@ def webhook():
     text = str(event.get('text')).lower()
     if 'shirt' in text or 'size' in text:
       update_shirt_prompt(event['channel'])
+    else if 'paid' in text:
+      send_slack_message(event['channel'], has_paid(event['user']))
     else:
       send_slack_message(event['channel'], "Hello")
   return "ok", 200
 
-# TODO: add hasPaid functionality
-
-# TODO: add reminders functionality
-
-# Update shirt size in database
+# Listener for updating shirt size in database
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
   # get shirt size and username
@@ -118,6 +116,14 @@ def get_email(id):
     if member["id"] == id:
       return member["profile"]["email"] 
   return "failure@you"
+
+# TODO: add hasPaid functionality
+def has_paid(id):
+  email = get_email(id)
+  paid = requests.post(os.environ["API_URL"] + "/member/ispaid", data={"email": email})
+  return paid
+
+# TODO: add reminders functionality
 
 # Debug
 def log(msg):
