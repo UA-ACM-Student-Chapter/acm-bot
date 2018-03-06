@@ -42,11 +42,12 @@ def update_shirt():
   payload = json.loads(request.form.get("payload"))
   log('Received {}'.format(payload))
   size = str(payload["actions"][0].get("value"))
-  username = payload["user"]["name"]
+  userid = payload["user"]["id"]
+  email = get_email(userid)
 
   # actually update shirt size and return the result
-  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", data={"email": username + "@crimson.ua.edu", "newShirtSize": size.upper()})
-  return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + username + "!", 200
+  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", data={"email": email, "newShirtSize": size.upper()})
+  return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
@@ -109,6 +110,14 @@ def update_shirt_prompt(channel):
       }
     ]
   )
+
+# Returns the email address for a user iD
+def get_email(id):
+  userlist = sc.api_call("users.list")
+  for member in userlist["members"]:
+    if member["id"] == id:
+      return member["profile"]["email"] 
+  return "failure@you"
 
 # Debug
 def log(msg):
