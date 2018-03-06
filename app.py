@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import requests
 import sys
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -37,12 +38,15 @@ def webhook():
 # Update shirt size in database
 @app.route('/update_shirt', methods=['POST'])
 def update_shirt():
-  # data = request.get_json()
+  # get shirt size and username
   payload = json.loads(request.form.get("payload"))
   log('Received {}'.format(payload))
   size = str(payload["actions"][0].get("value"))
-  # TODO: actually update shirt size lol
-  return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + payload["user"]["name"] + "!", 200
+  username = payload["user"]["name"]
+
+  # actually update shirt size and return the result
+  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", data={"email": username + "@crimson.ua.edu", "newShirtSize": size.upper()})
+  return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + username + "!", 200
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
