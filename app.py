@@ -120,7 +120,7 @@ def get_email(id):
 # TODO: add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
-  paid = requests.post(os.environ["API_URL"] + "/member/ispaid", data={"email": email})
+  paid = requests.post(os.environ["API_URL"] + "/member/ispaid", json={"email": email})
   return paid
 
 # TODO: add reminders functionality
