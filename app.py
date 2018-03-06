@@ -12,6 +12,7 @@ from slackclient import SlackClient
 app = Flask(__name__)
 slack_token = os.environ["SLACK_BOT_TOKEN"]
 bot_name = os.environ["BOT_NAME"]
+api_url = os.environ["API_URL"]
 sc = SlackClient(slack_token)
 
 # Webhook for all requests
@@ -51,7 +52,7 @@ def update_shirt():
   email = get_email(userid)
 
   # actually update shirt size and return the result
-  requests.post(os.environ["API_URL"] + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper()})
+  requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper()})
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Simple wrapper for sending a Slack message
@@ -127,7 +128,7 @@ def get_email(id):
 # Add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
-  paid = requests.post(os.environ["API_URL"] + "/member/ispaid", json={"email": email})
+  paid = requests.post(api_url + "/member/ispaid", json={"email": email})
   return paid.text
 
 # TODO: add reminders functionality
