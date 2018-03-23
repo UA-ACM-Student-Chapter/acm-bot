@@ -151,7 +151,7 @@ def get_user(email):
   r = requests.get(sc.api_call(
     "users.lookupByEmail",
     email=email
-  )).json()
+  ))
   return r["user"]["id"]
 
 # Add hasPaid functionality
