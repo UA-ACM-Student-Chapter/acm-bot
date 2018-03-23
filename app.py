@@ -59,7 +59,7 @@ def update_shirt():
 @app.route('/remind', methods=['GET'])
 def remind_hook():
   r = requests.get('https://ua-acm-web-util.herokuapp.com/semester/unpaiddetails')
-  unpaid = r.json()[0]
+  unpaid = r.json()['unpaidMembers']
   log(str(unpaid))
 
 # Simple wrapper for sending a Slack message
