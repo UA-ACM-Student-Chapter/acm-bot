@@ -155,7 +155,7 @@ def get_user(email):
     "users.lookupByEmail",
     email=email
   )
-  return user["user"]["id"] if user["ok"] else return "failure"
+  return user["user"]["id"] if user["ok"] else "failure"
 
 # Add hasPaid functionality
 def has_paid(id):
