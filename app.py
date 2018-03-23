@@ -148,10 +148,10 @@ def get_user(email):
   #   if member["profile"]["email"] == email:
   #     return member["id"]
   # return "failure"
-  r = json.loads(requests.get(sc.api_call(
+  r = json.loads(sc.api_call(
     "users.lookupByEmail",
     email=email
-  )))
+  ))
   return r["user"]["id"]
 
 # Add hasPaid functionality
