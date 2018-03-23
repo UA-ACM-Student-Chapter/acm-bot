@@ -61,7 +61,8 @@ def remind_hook():
   r = requests.get('https://ua-acm-web-util.herokuapp.com/semester/unpaiddetails')
   unpaid = r.json()['unpaidMembers']
   for member in unpaid:
-    log(str(member['crimsonEmail']))
+    email = str(member['crimsonEmail'])
+    log(get_user(email))
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
@@ -132,6 +133,15 @@ def get_email(id):
     if member["id"] == id:
       return member["profile"]["email"] 
   return "failure@you"
+
+# Returns the user ID for an email address
+def get_user(email):
+  userlist = sc.api_call("users.list")
+  for member in userlist["members"]:
+    log(str(member))
+    if member["email"] == email:
+      return member["profile"]
+  return "failure"
 
 # Add hasPaid functionality
 def has_paid(id):
