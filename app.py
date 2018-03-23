@@ -60,7 +60,8 @@ def update_shirt():
 def remind_hook():
   r = requests.get('https://ua-acm-web-util.herokuapp.com/semester/unpaiddetails')
   unpaid = r.json()['unpaidMembers']
-  log(str(unpaid[0]['crimsonEmail']))
+  for member in unpaid:
+    log(str(member['crimsonEmail']))
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
