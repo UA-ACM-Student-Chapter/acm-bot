@@ -146,17 +146,15 @@ def get_email(id):
 
 # Returns the user ID for an email address
 def get_user(email):
-  # userlist = sc.api_call("users.list")
-  # for member in userlist["members"]:
-  #   if member["profile"]["email"] == email:
-  #     return member["id"]
-  # return "failure"
-  r = sc.api_call(
-    "users.lookupByEmail",
-    email=email
-  )
-  log(str(r))
-  return r[1]["id"]
+  userlist = sc.api_call("users.list")
+  for member in userlist["members"]:
+    if member["profile"]["email"] == email:
+      return member["id"]
+  return "failure"
+  # return sc.api_call(
+  #   "users.lookupByEmail",
+  #   email=email
+  # )["user"]["id"]
 
 # Add hasPaid functionality
 def has_paid(id):
