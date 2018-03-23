@@ -55,6 +55,12 @@ def update_shirt():
   requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper()})
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
+# Listener for reminders
+@app.route('/remind', methods=['GET'])
+def remind_hook():
+  r = requests.get('https://ua-acm-web-util.herokuapp.com/semester/unpaiddetails')
+  log(str(r.json()))
+
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
   return sc.api_call(
@@ -132,6 +138,8 @@ def has_paid(id):
   return paid.text
 
 # TODO: add reminders functionality
+def remind():
+
 
 # Debug
 def log(msg):
