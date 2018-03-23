@@ -148,6 +148,7 @@ def get_email(id):
 def get_user(email):
   userlist = sc.api_call("users.list")
   for member in userlist["members"]:
+    log(str(member["profile"]))
     if member["profile"]["email"] == email:
       return member["id"]
   return "failure"
