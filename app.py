@@ -63,9 +63,13 @@ def remind_hook():
   for member in unpaid:
     email = str(member['crimsonEmail'])
     user = get_user(email)
-    log(user)
-    if (email == 'magarwal@crimson.ua.edu'):
-      log(str(open_dm(user)))
+    if (user != 'failure'):
+      log(user)
+      if (email == 'magarwal@crimson.ua.edu'):
+        dm = open_dm(user)
+        if dm["ok"]:
+          channel = dm["channel"]["id"]
+          send_slack_message(channel, "Pay your fucking dues")
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
