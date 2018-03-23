@@ -138,8 +138,6 @@ def has_paid(id):
   return paid.text
 
 # TODO: add reminders functionality
-def remind():
-
 
 # Debug
 def log(msg):
