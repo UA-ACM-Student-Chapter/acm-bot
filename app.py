@@ -72,6 +72,13 @@ def send_slack_message(channel, message):
     text=message
   )
 
+# Opens DM with a user
+def open_dm(id):
+  return sc.api_call(
+    "im.open",
+    user=id
+  )
+
 # Button-based input for asking shirt size
 def update_shirt_prompt(channel):
   return sc.api_call(
@@ -136,12 +143,16 @@ def get_email(id):
 
 # Returns the user ID for an email address
 def get_user(email):
-  userlist = sc.api_call("users.list")
-  for member in userlist["members"]:
-    log(str(member))
-    if member["email"] == email:
-      return member["profile"]
-  return "failure"
+  # userlist = sc.api_call("users.list")
+  # for member in userlist["members"]:
+  #   if member["profile"]["email"] == email:
+  #     return member["id"]
+  # return "failure"
+  r = requests.get(sc.api_call(
+    "users.lookupByEmail",
+    email=email
+  )).json()
+  return r["user"]["id"]
 
 # Add hasPaid functionality
 def has_paid(id):
