@@ -63,13 +63,12 @@ def remind_hook():
   for member in unpaid:
     email = str(member['crimsonEmail'])
     user = get_user(email)
-    if (user != 'failure'):
-      log(user)
-      if (email == 'magarwal@crimson.ua.edu'):
+    if (user != 'not_found'):
+      if (email == 'magarwal@crimson.ua.edu'): # TODO: remove this condition
         dm = open_dm(user)
         if dm["ok"]:
           channel = dm["channel"]["id"]
-          send_slack_message(channel, "Pay your fucking dues")
+          send_slack_message(channel, "Pay your dues. :)")
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
@@ -150,24 +149,17 @@ def get_email(id):
 
 # Returns the user ID for an email address
 def get_user(email):
-  # userlist = sc.api_call("users.list")
-  # for member in userlist["members"]:
-  #   if member["profile"]["email"] == email:
-  #     return member["id"]
-  # return "failure"
   user = sc.api_call(
     "users.lookupByEmail",
     email=email
   )
-  return user["user"]["id"] if user["ok"] else "failure"
+  return user["user"]["id"] if user["ok"] else 'not_found'
 
 # Add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(api_url + "/member/ispaid", json={"email": email})
   return paid.text
-
-# TODO: add reminders functionality
 
 # Debug
 def log(msg):
