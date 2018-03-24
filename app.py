@@ -92,7 +92,7 @@ def update_shirt_prompt(channel):
     channel=channel,
     attachments=[
     {
-      "title": "What"s your t-shirt size?",
+      "title": "What's your t-shirt size?",
       "fallback": "You are unable to choose a t-shirt size",
       "callback_id": "update_tshirt",
       "color": "#3AA3E3",
