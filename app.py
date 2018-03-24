@@ -58,7 +58,7 @@ def update_shirt():
 # Listener for reminders
 @app.route('/remind', methods=['GET'])
 def remind_hook():
-  r = requests.get('https://ua-acm-web-util.herokuapp.com/semester/unpaiddetails')
+  r = requests.get(api_url + '/semester/unpaiddetails')
   unpaid = r.json()['unpaidMembers']
   for member in unpaid:
     email = str(member['crimsonEmail'])
