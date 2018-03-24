@@ -16,37 +16,37 @@ api_url = os.environ["API_URL"]
 sc = SlackClient(slack_token)
 
 # Webhook for all requests
-@app.route('/', methods=['POST'])
+@app.route("/", methods=["POST"])
 def webhook():
   data = request.get_json()
-  log('Received {}'.format(data))
-  event = data['event']
+  log("Received {}".format(data))
+  event = data["event"]
   flag = True
-  if 'subtype' in event:
-    flag = event['subtype'] not in ['bot_message', 'message_changed']
-  if 'username' in event:
-    flag = flag and event['username'] != bot_name
-  if event['type'] == 'message' and flag:
-    text = str(event.get('text')).lower()
-    if 'shirt' in text or 'size' in text:
-      update_shirt_prompt(event['channel'])
-    elif 'paid' in text:
-      paid = has_paid(event['user'])
+  if "subtype" in event:
+    flag = event["subtype"] not in ["bot_message", "message_changed"]
+  if "username" in event:
+    flag = flag and event["username"] != bot_name
+  if event["type"] == "message" and flag:
+    text = str(event.get("text")).lower()
+    if "shirt" in text or "size" in text:
+      update_shirt_prompt(event["channel"])
+    elif "paid" in text:
+      paid = has_paid(event["user"])
       log(str(paid))
       if paid == "paid":
-        send_slack_message(event['channel'], 'Yes, you have paid!')
+        send_slack_message(event["channel"], "Yes, you have paid!")
       else:
-        send_slack_message(event['channel'], "Nope, you haven't yet. Do that at https://goo.gl/pa4MHS.")
+        send_slack_message(event["channel"], "Nope, you haven't yet. Do that at https://goo.gl/pa4MHS.")
     else:
-      send_slack_message(event['channel'], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
+      send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
   return "ok", 200
 
 # Listener for updating shirt size in database
-@app.route('/update_shirt', methods=['POST'])
+@app.route("/update_shirt", methods=["POST"])
 def update_shirt():
   # get shirt size and username
   payload = json.loads(request.form.get("payload"))
-  log('Received {}'.format(payload))
+  log("Received {}".format(payload))
   size = str(payload["actions"][0].get("value"))
   userid = payload["user"]["id"]
   email = get_email(userid)
@@ -56,15 +56,15 @@ def update_shirt():
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Listener for reminders
-@app.route('/remind', methods=['GET'])
+@app.route("/remind", methods=["GET"])
 def remind_hook():
-  r = requests.get(api_url + '/semester/unpaiddetails')
-  unpaid = r.json()['unpaidMembers']
+  r = requests.get(api_url + "/semester/unpaiddetails")
+  unpaid = r.json()["unpaidMembers"]
   for member in unpaid:
-    email = str(member['crimsonEmail'])
+    email = str(member["crimsonEmail"])
     user = get_user(email)
-    if (user != 'not_found'):
-      if (email == 'magarwal@crimson.ua.edu'): # TODO: remove this condition
+    if (user != "not_found"):
+      if (email == "magarwal@crimson.ua.edu"): # TODO: remove this condition
         dm = open_dm(user)
         if dm["ok"]:
           channel = dm["channel"]["id"]
@@ -92,7 +92,7 @@ def update_shirt_prompt(channel):
     channel=channel,
     attachments=[
     {
-      "title": "What's your t-shirt size?",
+      "title": "What"s your t-shirt size?",
       "fallback": "You are unable to choose a t-shirt size",
       "callback_id": "update_tshirt",
       "color": "#3AA3E3",
@@ -153,7 +153,7 @@ def get_user(email):
     "users.lookupByEmail",
     email=email
   )
-  return user["user"]["id"] if user["ok"] else 'not_found'
+  return user["user"]["id"] if user["ok"] else "not_found"
 
 # Add hasPaid functionality
 def has_paid(id):
