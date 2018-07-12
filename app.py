@@ -13,6 +13,7 @@ app = Flask(__name__)
 slack_token = os.environ["SLACK_BOT_TOKEN"]
 bot_name = os.environ["BOT_NAME"]
 api_url = os.environ["API_URL"]
+secret_key = os.environ["SECRET_KEY"]
 sc = SlackClient(slack_token)
 
 # Webhook for all requests
@@ -52,14 +53,14 @@ def update_shirt():
   email = get_email(userid)
 
   # actually update shirt size and return the result
-  requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper()})
+  requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper(), "secretKey": secret_key})
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Listener for reminders
 @app.route("/remind", methods=["GET"])
 def remind_hook():
   # TODO: add secret code
-  r = requests.get(api_url + "/semester/unpaiddetails")
+  r = requests.get(api_url + "/semester/unpaiddetails", headers = { "secretKey": secret_key })
   unpaid = r.json()["unpaidMembers"]
   for member in unpaid:
     email = str(member["crimsonEmail"])
@@ -159,7 +160,7 @@ def get_user(email):
 # Add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
-  paid = requests.post(api_url + "/member/ispaid", json={"email": email})
+  paid = requests.post(api_url + "/member/ispaid", json={"email": email, "secretKey": secret_key})
   return paid.text
 
 # Debug
