@@ -60,8 +60,8 @@ def update_shirt():
 @app.route("/remind", methods=["GET"])
 def remind_hook():
   # TODO: add secret code
-  r = requests.get(api_url + "/semester/unpaiddetails", headers = { "secretKey": secret_key })
-  unpaid = r.json()["unpaidMembers"]
+  r = requests.get(api_url + "/semester/unpaid", headers = { "secretKey": secret_key })
+  unpaid = r.json()["unpaid"]
   for member in unpaid:
     email = str(member["crimsonEmail"])
     user = get_user(email)
