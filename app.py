@@ -37,7 +37,7 @@ def webhook():
       if paid == "paid":
         send_slack_message(event["channel"], "Yes, you have paid!")
       else:
-        send_slack_message(event["channel"], "Nope, you haven't yet. Do that at https://goo.gl/pa4MHS.")
+        send_slack_message(event["channel"], "Nope, you haven't yet. Do that at http://acm.cs.ua.edu/.")
     else:
       send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
   return "ok", 200
