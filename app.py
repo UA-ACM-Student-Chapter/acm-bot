@@ -33,8 +33,8 @@ def webhook():
       update_shirt_prompt(event["channel"])
     elif "paid" in text or "due" in text or "pay" in text:
       paid = has_paid(event["user"])
-      log(str(paid))
-      if paid == "paid":
+      log(paid)
+      if paid["success"] == True and paid["hasPaid"] == True:
         send_slack_message(event["channel"], "Yes, you have paid!")
       else:
         send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
@@ -161,7 +161,7 @@ def get_user(email):
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(api_url + "/member/ispaid", json={"email": email, "secretKey": secret_key})
-  return paid.text
+  return paid
 
 # Debug
 def log(msg):
