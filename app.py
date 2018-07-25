@@ -3,6 +3,7 @@ import os
 import random
 import requests
 import sys
+import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -34,7 +35,8 @@ def webhook():
     elif "paid" in text or "due" in text or "pay" in text:
       paid = has_paid(event["user"])
       log(paid)
-      if paid["success"] == True and paid["hasPaid"] == True:
+      paid_data = json.loads(paid)
+      if paid_data["success"] == True and paid_data["hasPaid"] == True:
         send_slack_message(event["channel"], "Yes, you have paid!")
       else:
         send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
