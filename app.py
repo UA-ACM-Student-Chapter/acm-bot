@@ -161,7 +161,7 @@ def get_user(email):
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(api_url + "/member/ispaid", json={"email": email, "secretKey": secret_key})
-  return paid
+  return paid.text
 
 # Debug
 def log(msg):
