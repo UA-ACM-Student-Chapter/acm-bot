@@ -23,7 +23,7 @@ def webhook():
   data = request.get_json()
   log("Received {}".format(data))
   event = data["event"]
-  flag = True
+  flag = False
   if "subtype" in event:
     flag = event["subtype"] not in ["bot_message", "message_changed"]
   if "username" in event:
