@@ -25,7 +25,7 @@ def webhook():
   log("Received {}".format(data))
 
   if data["type"] == "url_verification":
-    return event["challenge"]
+    return data["challenge"]
 
   event = data["event"]
   flag = True
