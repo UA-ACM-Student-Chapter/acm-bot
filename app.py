@@ -24,24 +24,33 @@ def webhook():
   log("Received {}".format(data))
   event = data["event"]
   flag = True
+
   if "subtype" in event:
     flag = event["subtype"] not in ["bot_message", "message_changed"]
+
   if "username" in event:
     flag = flag and event["username"] != bot_name
+
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
+
     if "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
+
     elif "paid" in text or "due" in text or "pay" in text:
       paid = has_paid(event["user"])
       log(paid)
       paid_data = json.loads(paid)
+
       if paid_data["success"] == True and paid_data["hasPaid"] == True:
         send_slack_message(event["channel"], "Yes, you have paid!")
+
       else:
         send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
+
     else:
       send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
+
   return "ok", 200
 
 @app.route("/challenge", methods=["POST"])
@@ -60,6 +69,7 @@ def update_shirt():
 
   # actually update shirt size and return the result
   requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper(), "secretKey": secret_key})
+
   return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
 # Listener for reminders
@@ -68,6 +78,7 @@ def remind_hook():
   # TODO: add secret code
   r = requests.get(api_url + "/semester/unpaid", headers = { "secretKey": secret_key })
   unpaid = r.json()["unpaid"]
+
   for member in unpaid:
     email = str(member["crimsonEmail"])
     user = get_user(email)
@@ -150,9 +161,11 @@ def update_shirt_prompt(channel):
 # Returns the email address for a user iD
 def get_email(id):
   userlist = sc.api_call("users.list")
+
   for member in userlist["members"]:
     if member["id"] == id:
-      return member["profile"]["email"] 
+      return member["profile"]["email"]
+
   return "failure@you"
 
 # Returns the user ID for an email address
@@ -161,12 +174,14 @@ def get_user(email):
     "users.lookupByEmail",
     email=email
   )
+
   return user["user"]["id"] if user["ok"] else "not_found"
 
 # Add hasPaid functionality
 def has_paid(id):
   email = get_email(id)
   paid = requests.post(api_url + "/member/ispaid", json={"email": email, "secretKey": secret_key})
+
   return paid.text
 
 # Debug
