@@ -23,6 +23,10 @@ def webhook():
   print(request.get_json())
   data = request.get_json()
   log("Received {}".format(data))
+
+  if data["type"] == "url_verification":
+    return event["challenge"]
+
   event = data["event"]
   flag = True
 
@@ -31,9 +35,6 @@ def webhook():
 
   if "username" in event:
     flag = flag and event["username"] != bot_name
-
-  if event["type"] == "url_verification":
-    return event["challenge"]
 
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
