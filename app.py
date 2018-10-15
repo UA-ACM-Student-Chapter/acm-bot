@@ -54,7 +54,7 @@ def webhook():
   return "ok", 200
 
 @app.route("/challenge", methods=["POST"])
-def challenge:
+def challenge():
   return "3VHkS1H2GC1S6FSLW3WrGUFc"
 
 # Listener for updating shirt size in database
