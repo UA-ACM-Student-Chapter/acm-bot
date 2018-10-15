@@ -31,6 +31,9 @@ def webhook():
   if "username" in event:
     flag = flag and event["username"] != bot_name
 
+  if event["type"] == "url_verification":
+    return event["challenge"]
+
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
 
@@ -52,10 +55,6 @@ def webhook():
       send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
 
   return "ok", 200
-
-@app.route("/challenge", methods=["POST"])
-def challenge():
-  return "3VHkS1H2GC1S6FSLW3WrGUFc"
 
 # Listener for updating shirt size in database
 @app.route("/update_shirt", methods=["POST"])
