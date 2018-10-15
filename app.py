@@ -20,6 +20,7 @@ sc = SlackClient(slack_token)
 # Webhook for all requests
 @app.route("/", methods=["POST"])
 def webhook():
+  print(request.get_json())
   data = request.get_json()
   log("Received {}".format(data))
   event = data["event"]
