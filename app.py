@@ -41,7 +41,7 @@ def webhook():
     text = str(event.get("text")).lower()
 
     if text == "create election":
-      create_election_prompt()
+      create_election_prompt(event["channel"])
 
     if "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
@@ -194,7 +194,7 @@ def log(msg):
   print(str(msg))
   sys.stdout.flush()
 
-def create_election_prompt():
+def create_election_prompt(channel):
   return sc.api_call(
     "chat.postMessage",
     channel=channel,
