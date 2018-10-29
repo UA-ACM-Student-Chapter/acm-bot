@@ -6,6 +6,7 @@ import sys
 import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from pymongo import MongoClient
 
 from flask import Flask, request
 from slackclient import SlackClient
@@ -38,6 +39,9 @@ def webhook():
 
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
+
+    if text == "create election":
+      create_election_prompt()
 
     if "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
@@ -189,3 +193,10 @@ def has_paid(id):
 def log(msg):
   print(str(msg))
   sys.stdout.flush()
+
+def create_election_prompt():
+  return sc.api_call(
+    "chat.postMessage",
+    channel=channel,
+    text="You can create an election by saying 'create election \"[Election Name]\""
+  )
