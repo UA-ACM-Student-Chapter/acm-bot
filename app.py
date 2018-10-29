@@ -41,7 +41,14 @@ def webhook():
     text = str(event.get("text")).lower()
 
     if text == "create election":
-      create_election_prompt(event["channel"])
+      send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
+
+    if text.startswith('create election "'):
+      try:
+        electionName = text.split('"')[1]
+        create_election(electionName)
+      except:
+        send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
 
     if "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
@@ -194,9 +201,8 @@ def log(msg):
   print(str(msg))
   sys.stdout.flush()
 
-def create_election_prompt(channel):
-  return sc.api_call(
-    "chat.postMessage",
-    channel=channel,
-    text="You can create an election by saying 'create election \"[Election Name]\""
-  )
+def create_election(name):
+  client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
+  store = client.heroku_j9g2w0v4
+  doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions' [] }
+  store.db.insert_one(doc)
