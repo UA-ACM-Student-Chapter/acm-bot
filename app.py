@@ -42,7 +42,7 @@ def webhook():
 
     if text == "create election":
       send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
-
+      update_tracked_conversation(event["user"], "election_creation", "get_name")
     elif text.startswith('create election "'):
       success = True
       try:
@@ -209,3 +209,8 @@ def create_election(name, channel):
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
   send_slack_message(channel, "Election \"" + name + "\" created.")
+
+def update_tracked_conversation(username, subtype, state):
+  client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
+  store = client.heroku_j9g2w0v4
+  doc = { 'type': 'tracked_conversation', 'user': username, 'subtype': subtype, 'state': state }
