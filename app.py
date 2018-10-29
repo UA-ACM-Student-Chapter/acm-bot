@@ -204,5 +204,5 @@ def log(msg):
 def create_election(name):
   client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
   store = client.heroku_j9g2w0v4
-  doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions' [] }
+  doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
