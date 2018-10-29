@@ -208,4 +208,4 @@ def create_election(name, channel):
   store = client.heroku_j9g2w0v4
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
-  send_slack_message(event["channel"], "Election \"" + name + "\" created.")
+  send_slack_message(channel, "Election \"" + name + "\" created.")
