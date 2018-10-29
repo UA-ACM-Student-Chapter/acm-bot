@@ -42,11 +42,13 @@ def webhook():
 
     if text == "create election":
       send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
+      break
 
     if text.startswith('create election "'):
       try:
         electionName = text.split('"')[1]
         create_election(electionName)
+        break
       except:
         send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
 
