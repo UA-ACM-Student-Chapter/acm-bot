@@ -50,7 +50,7 @@ def webhook():
       except:
         send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
       if success:
-        create_election(electionName)
+        create_election(electionName, event["channel"])
 
     elif "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
@@ -203,7 +203,7 @@ def log(msg):
   print(str(msg))
   sys.stdout.flush()
 
-def create_election(name):
+def create_election(name, channel):
   client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
   store = client.heroku_j9g2w0v4
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
