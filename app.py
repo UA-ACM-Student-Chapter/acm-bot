@@ -44,11 +44,13 @@ def webhook():
       send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
 
     elif text.startswith('create election "'):
+      success = True
       try:
         electionName = text.split('"')[1]
-        create_election(electionName)
       except:
         send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
+      if success:
+        create_election(electionName)
 
     elif "shirt" in text or "size" in text:
       update_shirt_prompt(event["channel"])
