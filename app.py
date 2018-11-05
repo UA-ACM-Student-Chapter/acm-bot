@@ -202,20 +202,17 @@ def log(msg):
   sys.stdout.flush()
 
 def create_election(name, channel):
-  client = MongoClient(os.environ['MONGODB_URI'])
-  store = client.heroku_j9g2w0v4
+  store = get_db_connection()
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
 
 def update_workflow(username, state, active):
-  client = MongoClient(os.environ['MONGODB_URI'])
-  store = client.heroku_j9g2w0v4
+  store = get_db_connection()
   doc = { 'type': 'tracked_conversation', 'user': username, 'state': state, "active": True }
   store.db.insert_one(doc)
 
 def get_current_user_workflow(user):
-  client = MongoClient(os.environ['MONGODB_URI'])
-  store =client.heroku_j9g2w0v4
+  store = get_db_connection()
   return store.db.find_one({"type": "tracked_conversation", "user": user, "active": True}, sort=[('_id', -1)])
 
 def handle_workflow(user, channel, text, workflow):
@@ -239,6 +236,9 @@ def handle_workflow(user, channel, text, workflow):
   print("handled workflow" + workflow["state"])
 
 def set_current_workflow_item_inactive(user):
-  client = MongoClient(os.environ['MONGODB_URI'])
-  store =client.heroku_j9g2w0v4
+  store = get_db_connection()
   store.db.update_one({"_id": get_current_user_workflow(user)["_id"]}, {"$set": {"active": False}})
+
+def get_db_connection():
+  client = MongoClient(os.environ['MONGODB_URI'])
+  return client.heroku_j9g2w0v4
