@@ -216,10 +216,6 @@ def get_current_user_workflow(user):
   return store.db.find_one({"type": "tracked_conversation", "user": user, "active": True}, sort=[('_id', -1)])
 
 def handle_workflow(user, channel, text, workflow):
-  workflows = {
-    "get_election_name": get_election_name
-  }
-  
   def get_election_name():
     if text.startswith('create election "'):
         try:
@@ -230,4 +226,8 @@ def handle_workflow(user, channel, text, workflow):
           send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
         update_tracked_conversation(user, "get_position_names", True)
 
-    workflows[workflow["state"]]()
+  workflows = {
+    "get_election_name": get_election_name
+  }
+
+  workflows[workflow["state"]]()
