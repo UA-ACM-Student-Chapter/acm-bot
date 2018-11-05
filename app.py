@@ -42,6 +42,7 @@ def webhook():
     current_workflow = get_current_user_workflow(event["user"])
     if text == "quit":
       set_current_workflow_item_inactive(event["user"])
+      send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
