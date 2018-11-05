@@ -39,35 +39,30 @@ def webhook():
 
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
+    current_workflow = get_current_user_workflow(event["user"])
+    if current_workflow != None:
+      handle_workflow(event["user"], event["channel"], text, current_workflow)
+    else:
+      if text == "create election":
+        send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
+        update_tracked_conversation(event["user"], "election_creation", "get_name")
 
-    if text == "create election":
-      send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
-      update_tracked_conversation(event["user"], "election_creation", "get_name")
-    elif text.startswith('create election "'):
-      success = True
-      try:
-        electionName = text.split('"')[1]
-      except:
-        send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
-      if success:
-        create_election(electionName, event["channel"])
+      elif "shirt" in text or "size" in text:
+        update_shirt_prompt(event["channel"])
 
-    elif "shirt" in text or "size" in text:
-      update_shirt_prompt(event["channel"])
+      elif "paid" in text or "due" in text or "pay" in text:
+        paid = has_paid(event["user"])
+        log(paid)
+        paid_data = json.loads(paid)
 
-    elif "paid" in text or "due" in text or "pay" in text:
-      paid = has_paid(event["user"])
-      log(paid)
-      paid_data = json.loads(paid)
+        if paid_data["success"] == True and paid_data["hasPaid"] == True:
+          send_slack_message(event["channel"], "Yes, you have paid!")
 
-      if paid_data["success"] == True and paid_data["hasPaid"] == True:
-        send_slack_message(event["channel"], "Yes, you have paid!")
+        else:
+          send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
 
       else:
-        send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
-
-    else:
-      send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
+        send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
 
   return "ok", 200
 
@@ -204,14 +199,33 @@ def log(msg):
   sys.stdout.flush()
 
 def create_election(name, channel):
-  client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
+  client = MongoClient(os.envr)
   store = client.heroku_j9g2w0v4
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
-  send_slack_message(channel, "Election \"" + name + "\" created.")
 
-def update_tracked_conversation(username, subtype, state):
-  client = MongoClient('mongodb://testuser:testuser1@ds037758.mlab.com:37758/heroku_j9g2w0v4')
+def update_tracked_conversation(username, state, active):
+  client = MongoClient(os.environ['MONGODB_URI'])
   store = client.heroku_j9g2w0v4
-  doc = { 'type': 'tracked_conversation', 'user': username, 'subtype': subtype, 'state': state }
+  doc = { 'type': 'tracked_conversation', 'user': username, 'state': state, "active": True }
   store.db.insert_one(doc)
+
+def get_current_user_workflow(user):
+  client = MongoClient(os.environ['MONGODB_URI'])
+  store =client.heroku_j9g2w0v4
+  return store.db.find_one({"type": "tracked_conversation", "user": user, "active": True}, sort=[('_id', -1)])
+
+def handle_workflow(user, channel, text, workflow):
+  workflows = {
+    "get_election_name": get_election_name
+  }
+  
+  def get_election_name():
+    if text.startswith('create election "'):
+        try:
+          electionName = text.split('"')[1]
+          create_election(electionName, event["channel"])
+          send_slack_message(channel, "Alright, can you tell me the position names for the \"" + name + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
+        except:
+          send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
+        update_tracked_conversation(user, "get_position_names", True)
