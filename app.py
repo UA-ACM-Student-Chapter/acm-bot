@@ -45,7 +45,7 @@ def webhook():
     else:
       if text == "create election":
         send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
-        update_tracked_conversation(event["user"], "election_creation", "get_name")
+        update_tracked_conversation(event["user"], "get_election_name", True)
 
       elif "shirt" in text or "size" in text:
         update_shirt_prompt(event["channel"])
@@ -224,6 +224,7 @@ def handle_workflow(user, channel, text, workflow):
           send_slack_message(channel, "Alright, can you tell me the position names for the \"" + name + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
         except:
           send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
+        set_current_workflow_item_inactive(user)
         update_tracked_conversation(user, "get_position_names", True)
 
   workflows = {
@@ -231,3 +232,9 @@ def handle_workflow(user, channel, text, workflow):
   }
 
   workflows[workflow["state"]]()
+  print("handled workflow" + workflow["state"])
+
+def set_current_workflow_item_inactive(user):
+  client = MongoClient(os.environ['MONGODB_URI'])
+  store =client.heroku_j9g2w0v4
+  store.db.update_one({"_id": get_current_user_workflow(user)["_id"]}, {"$set": {"active": False}})
