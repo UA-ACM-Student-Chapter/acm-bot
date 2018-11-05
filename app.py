@@ -40,7 +40,7 @@ def webhook():
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
     current_workflow = get_current_user_workflow(event["user"])
-    if text = "quit":
+    if text == "quit":
       set_current_workflow_item_inactive(event["user"])
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
