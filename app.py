@@ -229,3 +229,5 @@ def handle_workflow(user, channel, text, workflow):
         except:
           send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
         update_tracked_conversation(user, "get_position_names", True)
+
+    workflows[workflow["state"]]()
