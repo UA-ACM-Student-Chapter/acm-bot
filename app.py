@@ -41,7 +41,7 @@ def webhook():
     text = str(event.get("text")).lower()
     current_workflow = get_current_user_workflow(event["user"])
     if text == "quit":
-      set_current_workflow_item_inactive(event["user"])
+      set_current_workflow_item_inactive(event["user"], channel)
       send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
@@ -219,12 +219,12 @@ def handle_workflow(user, channel, text, workflow):
   def get_election_name():
     create_election(text, channel)
     send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
-    set_current_workflow_item_inactive(user)
+    set_current_workflow_item_inactive(user, channel)
     update_workflow(user, "get_position_names", True)
 
   def get_position_names():
     send_slack_message(channel, "Thanks! I won't do anything with that for now. Goodbye!")
-    set_current_workflow_item_inactive(user)
+    set_current_workflow_item_inactive(user, channel)
 
   workflows = {
     "get_election_name": get_election_name,
@@ -235,9 +235,13 @@ def handle_workflow(user, channel, text, workflow):
 
   print("handled workflow" + workflow["state"])
 
-def set_current_workflow_item_inactive(user):
+def set_current_workflow_item_inactive(user, channel):
   store = get_db_connection()
-  store.db.update_one({"_id": get_current_user_workflow(user)["_id"]}, {"$set": {"active": False}})
+  current_workflow = get_current_user_workflow(user)
+  if current_workflow != None:
+    store.db.update_one({"_id": current_workflow["_id"]}, {"$set": {"active": False}})
+  else:
+    send_slack_message(channel, "I don't think we were talking about anything in particular.")
 
 def get_db_connection():
   client = MongoClient(os.environ['MONGODB_URI'])
