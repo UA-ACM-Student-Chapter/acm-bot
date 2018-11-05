@@ -220,7 +220,7 @@ def get_current_user_workflow(user):
 
 def handle_workflow(user, channel, text, workflow):
   def get_election_name():
-    create_election(text, event["channel"])
+    create_election(text, channel)
     send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
     set_current_workflow_item_inactive(user)
     update_workflow(user, "get_position_names", True)
