@@ -223,7 +223,7 @@ def handle_workflow(user, channel, text, workflow):
           create_election(electionName, event["channel"])
           send_slack_message(channel, "Alright, can you tell me the position names for the \"" + name + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
         except:
-          send_slack_message(event["channel"], "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
+          send_slack_message(channel, "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
         set_current_workflow_item_inactive(user)
         update_tracked_conversation(user, "get_position_names", True)
 
