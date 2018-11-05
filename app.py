@@ -47,7 +47,7 @@ def webhook():
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
       if text == "create election":
-        send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
+        send_slack_message(event["channel"], "Okay, tell me the name of the election.")
         update_workflow(event["user"], "get_election_name", True)
 
       elif "shirt" in text or "size" in text:
