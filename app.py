@@ -40,12 +40,14 @@ def webhook():
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
     current_workflow = get_current_user_workflow(event["user"])
-    if current_workflow != None:
+    if text = "quit":
+      set_current_workflow_item_inactive(event["user"])
+    elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
       if text == "create election":
         send_slack_message(event["channel"], "You can create an election by saying 'create election \"[Election Name]\"'.")
-        update_tracked_conversation(event["user"], "get_election_name", True)
+        update_workflow(event["user"], "get_election_name", True)
 
       elif "shirt" in text or "size" in text:
         update_shirt_prompt(event["channel"])
@@ -204,7 +206,7 @@ def create_election(name, channel):
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
 
-def update_tracked_conversation(username, state, active):
+def update_workflow(username, state, active):
   client = MongoClient(os.environ['MONGODB_URI'])
   store = client.heroku_j9g2w0v4
   doc = { 'type': 'tracked_conversation', 'user': username, 'state': state, "active": True }
@@ -218,20 +220,17 @@ def get_current_user_workflow(user):
 def handle_workflow(user, channel, text, workflow):
   def get_election_name():
     if text.startswith('create election "'):
-        try:
-          electionName = text.split('"')[1]
-          create_election(electionName, event["channel"])
-          send_slack_message(channel, "Alright, can you tell me the position names for the \"" + name + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
-        except:
-          send_slack_message(channel, "Sorry, I think you had a typo. I couldn't read the election name for your 'create election' command.")
+        create_election(text, event["channel"])
+        send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
         set_current_workflow_item_inactive(user)
-        update_tracked_conversation(user, "get_position_names", True)
+        update_workflow(user, "get_position_names", True)
 
   workflows = {
     "get_election_name": get_election_name
   }
 
   workflows[workflow["state"]]()
+
   print("handled workflow" + workflow["state"])
 
 def set_current_workflow_item_inactive(user):
