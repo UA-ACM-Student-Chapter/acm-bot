@@ -219,14 +219,18 @@ def get_current_user_workflow(user):
 
 def handle_workflow(user, channel, text, workflow):
   def get_election_name():
-    if text.startswith('create election "'):
-        create_election(text, event["channel"])
-        send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
-        set_current_workflow_item_inactive(user)
-        update_workflow(user, "get_position_names", True)
+    create_election(text, event["channel"])
+    send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
+    set_current_workflow_item_inactive(user)
+    update_workflow(user, "get_position_names", True)
+
+  def get_position_names():
+    send_slack_message(channel, "Thanks! I won't do anything with that for now. Goodbye!")
+    set_current_workflow_item_inactive(user)
 
   workflows = {
-    "get_election_name": get_election_name
+    "get_election_name": get_election_name,
+    "get_position_names": get_position_names
   }
 
   workflows[workflow["state"]]()
