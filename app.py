@@ -42,9 +42,6 @@ def webhook():
     text = str(event.get("text")).lower()
     user = event["user"]
     channel = event["channel"]
-    if "id" in user:
-      print("fixing user")
-      user = user["id"]
     current_workflow = get_current_user_workflow(user)
     if text == "quit":
       say_confirmation = set_current_workflow_item_inactive(user, channel)
@@ -109,7 +106,7 @@ def interactivity():
   def start_election():
     election_name = payload["actions"][0].get("value")
     set_election_as_active(election_name)
-    update_workflow(payload["user"], "election_mode", True, { "election_name": election_name })
+    update_workflow(payload["user"]["id"], "election_mode", True, { "election_name": election_name })
     return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
 
   callback_actions = {
@@ -261,7 +258,6 @@ def update_workflow(username, state, active, data):
   store.db.insert_one(doc)
 
 def get_current_user_workflow(user):
-  print(user)
   store = get_db_connection()
   return store.db.find_one({"type": "tracked_conversation", "user": user, "active": True}, sort=[('_id', -1)])
 
@@ -327,7 +323,6 @@ def prompt_elections_list(channel):
   elections = store.db.find({"type": "election"}, sort=[('_id', -1)])
   election_actions = []
   for election in elections:
-    print(election)
     election_actions.append({
       "name": "election_name",
       "text": election["name"],
