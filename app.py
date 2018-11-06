@@ -50,6 +50,9 @@ def webhook():
         send_slack_message(event["channel"], "Okay, tell me the name of the election.")
         update_workflow(event["user"], "get_election_name", True)
 
+      if event["user"] == os.environ["ADMIN"] and text == "list election users":
+        get_users_subscribed_to_elections(event["channel"])
+
       elif "election" in text:
         send_slack_message(event["channel"], "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for.")
         subscribe_to_elections(event["user"])
@@ -252,9 +255,10 @@ def subscribe_to_elections(user):
   doc = {"type": "election_subscription", "user": user}
   store.db.insert_one(doc)
 
-def get_users_subscribed_to_elections():
+def get_users_subscribed_to_elections(channel):
   store = get_db_connection()
-  store.db.find()
+  users = store.db.find({"type": "election_subscription"}).distinct("user")
+  send_slack_message(channel, users)
 
 def get_db_connection():
   client = MongoClient(os.environ['MONGODB_URI'])
