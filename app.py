@@ -102,7 +102,7 @@ def interactivity():
     return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
   def start_election():
-    return "Started \"" + payload["actions"][0].get("value") + "\""
+    return "Started \"" + payload["actions"][0].get("value") + "\". To get the election stats, just say \"stats\". To set what position is currently being voted for, say 'set \"position name\"'. To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
 
   callback_actions = {
     "update_tshirt": update_tshirt,
