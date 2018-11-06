@@ -47,11 +47,16 @@ def webhook():
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
-      if event["user"] == os.environ["ADMIN"] and text == "create election":
+      if is_admin(event["user"]) and text == "create election":
         send_slack_message(event["channel"], "Okay, tell me the name of the election.")
         update_workflow(event["user"], "get_election_name", True)
 
-      elif event["user"] == os.environ["ADMIN"] and text == "list election users":
+      if is_admin(event["user"]) and text == "start election":
+        send_slack_message(event["channel"], "Okay, which election do you want to start?.")
+        send_slack_message(event["channel"], get_elections_list())
+        set_current_workflow_item_inactive(event["user"], "get_election_name", True)
+
+      elif is_admin(event["user"]) and text == "list election users":
         get_users_subscribed_to_elections(event["channel"])
 
       elif "election" in text:
@@ -268,3 +273,10 @@ def get_db_connection():
   if os.environ["IS_PRODUCTION"].lower() == "true":
     return client.heroku_0hcp48pq
   return client.heroku_j9g2w0v4
+
+def is_admin(user):
+  return user == os.environ["ADMIN"]
+
+def get_elections_list():
+  store = get_db_connection()
+  elections = store.db.find({"type": "election"})
