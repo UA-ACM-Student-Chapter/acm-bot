@@ -44,6 +44,8 @@ def webhook():
       say_confirmation = set_current_workflow_item_inactive(event["user"], event["channel"])
       if say_confirmation:
         send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
+      else:
+        send_slack_message(channel, "I don't think we were talking about anything in particular.")
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
@@ -52,7 +54,7 @@ def webhook():
         update_workflow(event["user"], "get_election_name", True)
 
       if is_admin(event["user"]) and text == "start election":
-        send_slack_message(event["channel"], "Okay, which election do you want to start?.")
+        send_slack_message(event["channel"], "Okay, which election do you want to start?")
         send_slack_message(event["channel"], get_elections_list())
         set_current_workflow_item_inactive(event["user"], event["channel"])
 
@@ -255,7 +257,6 @@ def set_current_workflow_item_inactive(user, channel):
     store.db.update_one({"_id": current_workflow["_id"]}, {"$set": {"active": False}})
     return True
   else:
-    send_slack_message(channel, "I don't think we were talking about anything in particular.")
     return False
 
 def subscribe_to_elections(user, channel):
@@ -279,4 +280,4 @@ def is_admin(user):
 
 def get_elections_list():
   store = get_db_connection()
-  elections = store.db.find({"type": "election"})
+  return store.db.find({"type": "election"})
