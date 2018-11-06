@@ -43,6 +43,7 @@ def webhook():
     user = event["user"]
     channel = event["channel"]
     if "id" in user:
+      print("fixing user")
       user = user["id"]
     current_workflow = get_current_user_workflow(user)
     if text == "quit":
@@ -61,7 +62,7 @@ def webhook():
       elif is_admin(user) and text == "start election":
         prompt_elections_list(channel)
         set_current_workflow_item_inactive(user, channel)
-        
+
       elif is_admin(user) and text == "list election users":
         get_users_subscribed_to_elections(channel)
 
@@ -260,6 +261,7 @@ def update_workflow(username, state, active, data):
   store.db.insert_one(doc)
 
 def get_current_user_workflow(user):
+  print(user)
   store = get_db_connection()
   return store.db.find_one({"type": "tracked_conversation", "user": user, "active": True}, sort=[('_id', -1)])
 
