@@ -280,7 +280,8 @@ def handle_workflow(user, channel, text, workflow):
 
   workflows = {
     "get_election_name": get_election_name,
-    "get_position_names": get_position_names
+    "get_position_names": get_position_names,
+    "election_mode": election_mode
   }
 
   workflows[workflow["state"]]()
