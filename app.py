@@ -55,7 +55,7 @@ def webhook():
 
       elif "election" in text:
         send_slack_message(event["channel"], "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for.")
-        subscribe_to_elections(event["user"])
+        subscribe_to_elections(event["user"], event["channel"])
 
       elif "shirt" in text or "size" in text:
         update_shirt_prompt(event["channel"])
@@ -250,14 +250,14 @@ def set_current_workflow_item_inactive(user, channel):
   else:
     send_slack_message(channel, "I don't think we were talking about anything in particular.")
 
-def subscribe_to_elections(user):
+def subscribe_to_elections(user, channel):
   store = get_db_connection()
-  doc = {"type": "election_subscription", "user": user}
+  doc = {"type": "election_subscription", "email": get_email(user), "channel": channel }
   store.db.insert_one(doc)
 
 def get_users_subscribed_to_elections(channel):
   store = get_db_connection()
-  users = store.db.find({"type": "election_subscription"}).distinct("user")
+  users = store.db.find({"type": "election_subscription"}).distinct("email")
   send_slack_message(channel, users)
 
 def get_db_connection():
