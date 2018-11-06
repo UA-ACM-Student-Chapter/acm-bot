@@ -265,6 +265,6 @@ def get_users_subscribed_to_elections(channel):
 
 def get_db_connection():
   client = MongoClient(os.environ['MONGODB_URI'])
-  if os.environ["IS_PRODUCTION"].tolower() == "true":
+  if os.environ["IS_PRODUCTION"].lower() == "true":
     return client.heroku_0hcp48pq
   return client.heroku_j9g2w0v4
