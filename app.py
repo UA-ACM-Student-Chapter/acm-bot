@@ -55,7 +55,7 @@ def webhook():
 
       if is_admin(event["user"]) and text == "start election":
         send_slack_message(event["channel"], "Okay, which election do you want to start?")
-        prompt_elections_list()
+        prompt_elections_list(event["channel"])
         set_current_workflow_item_inactive(event["user"], event["channel"])
 
       elif is_admin(event["user"]) and text == "list election users":
@@ -278,7 +278,7 @@ def get_db_connection():
 def is_admin(user):
   return user == os.environ["ADMIN"]
 
-def prompt_elections_list():
+def prompt_elections_list(channel):
   store = get_db_connection()
   elections = store.db.find({"type": "election"})
   election_actions = []
