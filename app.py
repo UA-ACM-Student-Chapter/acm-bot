@@ -55,7 +55,6 @@ def webhook():
         update_workflow(event["user"], "get_election_name", True)
 
       if is_admin(event["user"]) and text == "start election":
-        send_slack_message(event["channel"], "Okay, which election do you want to start?")
         prompt_elections_list(event["channel"])
         set_current_workflow_item_inactive(event["user"], event["channel"])
 
@@ -92,7 +91,7 @@ def interactivity():
   payload = json.loads(request.form.get("payload"))
   log("Received {}".format(payload))
 
-  def update_shirt():
+  def update_tshirt():
     size = str(payload["actions"][0].get("value"))
     userid = payload["user"]["id"]
     email = get_email(userid)
@@ -103,10 +102,10 @@ def interactivity():
     return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
 
   def start_election():
-    return "Started " + payload["actions"][0].get("value")
+    return "Started \"" + payload["actions"][0].get("value") + "\""
 
   callback_actions = {
-    "update_shirt": update_shirt,
+    "update_tshirt": update_tshirt,
     "start_election": start_election
   }
   
