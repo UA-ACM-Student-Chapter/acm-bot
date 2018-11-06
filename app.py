@@ -40,47 +40,51 @@ def webhook():
 
   if event["type"] == "message" and flag:
     text = str(event.get("text")).lower()
-    current_workflow = get_current_user_workflow(event["user"])
+    user = event["user"]
+    channel = event["channel"]
+    if "id" in user:
+      user = user["id"]
+    current_workflow = get_current_user_workflow(user)
     if text == "quit":
-      say_confirmation = set_current_workflow_item_inactive(event["user"], event["channel"])
+      say_confirmation = set_current_workflow_item_inactive(user, channel)
       if say_confirmation:
-        send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
+        send_slack_message(channel, "Okay! I forgot what we were talking about.")
       else:
-        send_slack_message(event["channel"], "I don't think we were talking about anything in particular.")
+        send_slack_message(channel, "I don't think we were talking about anything in particular.")
     elif current_workflow != None:
-      handle_workflow(event["user"], event["channel"], text, current_workflow)
+      handle_workflow(user, channel, text, current_workflow)
     else:
       if is_admin(event["user"]) and text == "create election":
-        send_slack_message(event["channel"], "Okay, tell me the name of the election.")
-        update_workflow(event["user"], "get_election_name", True)
+        send_slack_message(channel, "Okay, tell me the name of the election.")
+        update_workflow(user, "get_election_name", True)
 
-      if is_admin(event["user"]) and text == "start election":
-        prompt_elections_list(event["channel"])
-        set_current_workflow_item_inactive(event["user"], event["channel"])
+      if is_admin(user and text == "start election":
+        prompt_elections_list(channel)
+        set_current_workflow_item_inactive(user, channel)
 
-      elif is_admin(event["user"]) and text == "list election users":
-        get_users_subscribed_to_elections(event["channel"])
+      elif is_admin(user) and text == "list election users":
+        get_users_subscribed_to_elections(channel)
 
       elif "election" in text:
-        send_slack_message(event["channel"], "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for.")
-        subscribe_to_elections(event["user"], event["channel"])
+        send_slack_message(channel, "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for.")
+        subscribe_to_elections(user, channel)
 
       elif "shirt" in text or "size" in text:
-        update_shirt_prompt(event["channel"])
+        update_shirt_prompt(channel)
 
       elif "paid" in text or "due" in text or "pay" in text:
-        paid = has_paid(event["user"])
+        paid = has_paid(user)
         log(paid)
         paid_data = json.loads(paid)
 
         if paid_data["success"] == True and paid_data["hasPaid"] == True:
-          send_slack_message(event["channel"], "Yes, you have paid!")
+          send_slack_message(channel, "Yes, you have paid!")
 
         else:
-          send_slack_message(event["channel"], "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
+          send_slack_message(channel, "Nope, you haven't paid yet. Do that at http://acm.cs.ua.edu/.")
 
       else:
-        send_slack_message(event["channel"], "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
+        send_slack_message(channel, "Hello. Ask me to update your t-shirt size, or if you've paid your dues.")
 
   return "ok", 200
 
