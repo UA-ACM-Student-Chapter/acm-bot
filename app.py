@@ -56,7 +56,7 @@ def webhook():
     else:
       if is_admin(event["user"]) and text == "create election":
         send_slack_message(channel, "Okay, tell me the name of the election.")
-        update_workflow(user, "get_election_name", True)
+        update_workflow(user, "get_election_name", True, None)
 
       if is_admin(user) and text == "start election":
         prompt_elections_list(channel)
@@ -108,7 +108,7 @@ def interactivity():
   def start_election():
     election_name = payload["actions"][0].get("value")
     set_election_as_active(election_name)
-    update_workflow(payload["user"], "election_mode", True)
+    update_workflow(payload["user"], "election_mode", True, { "election_name": election_name })
     return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
 
   callback_actions = {
@@ -254,9 +254,9 @@ def create_election(name, channel):
   doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
   store.db.insert_one(doc)
 
-def update_workflow(username, state, active):
+def update_workflow(username, state, active, data):
   store = get_db_connection()
-  doc = { 'type': 'tracked_conversation', 'user': username, 'state': state, "active": True }
+  doc = { 'type': 'tracked_conversation', 'user': username, 'state': state, "active": True, "data": data }
   store.db.insert_one(doc)
 
 def get_current_user_workflow(user):
@@ -268,7 +268,7 @@ def handle_workflow(user, channel, text, workflow):
     create_election(text, channel)
     send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
     set_current_workflow_item_inactive(user, channel)
-    update_workflow(user, "get_position_names", True)
+    update_workflow(user, "get_position_names", True, None)
 
   def get_position_names():
     send_slack_message(channel, "Thanks! I won't do anything with that for now. Goodbye!")
