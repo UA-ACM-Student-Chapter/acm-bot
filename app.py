@@ -281,9 +281,9 @@ def is_admin(user):
 def prompt_elections_list():
   store = get_db_connection()
   elections = store.db.find({"type": "election"})
-  print("elections: " + elections)
   election_actions = []
   for election in elections:
+    print(election)
     election_actions.append({
       "name": "election_name",
       "text": election["name"],
