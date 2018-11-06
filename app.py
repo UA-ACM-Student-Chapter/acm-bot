@@ -25,8 +25,9 @@ def webhook():
   data = request.get_json()
   log("Received {}".format(data))
 
-  if data["type"] == "url_verification":
-    return data["challenge"]
+  # Used to initially verify a Slack bot
+  # if data["type"] == "url_verification":
+  #   return data["challenge"]
 
   event = data["event"]
   flag = True
