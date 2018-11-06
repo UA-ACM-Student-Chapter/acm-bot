@@ -126,7 +126,7 @@ def start_election():
 
   if is_admin(userid):
     start_election(election_name)
-    return "Started election \"" + election_name "\"."
+    return "Started election \"" + election_name + "\"."
   
   return "You're an evil, evil person trying to hack an election. Shame on you >:(."
 
