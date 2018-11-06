@@ -116,6 +116,20 @@ def remind_hook():
           channel = dm["channel"]["id"]
           send_slack_message(channel, "Pay your dues. :)")
 
+@app.route("/start_election", methods=["POST"])
+def start_election():
+  payload = json.loads(request.form.get("payload"))
+  log("Received {}".format(payload))
+  election_name = str(payload["actions"][0].get("value"))
+  userid = payload["user"]["id"]
+  email = get_email(payload["user"]["id"])
+
+  if is_admin(userid):
+    start_election(election_name)
+    return "Started election \"" + election_name "\"."
+  
+  return "You're an evil, evil person trying to hack an election. Shame on you >:(."
+
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
   return sc.api_call(
@@ -310,3 +324,6 @@ def prompt_elections_list(channel):
       }
     ]
   )
+
+def start_election(name):
+  return True
