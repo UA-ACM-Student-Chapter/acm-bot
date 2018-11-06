@@ -55,7 +55,7 @@ def webhook():
 
       if is_admin(event["user"]) and text == "start election":
         send_slack_message(event["channel"], "Okay, which election do you want to start?")
-        send_slack_message(event["channel"], get_elections_list())
+        prompt_elections_list()
         set_current_workflow_item_inactive(event["user"], event["channel"])
 
       elif is_admin(event["user"]) and text == "list election users":
@@ -278,6 +278,35 @@ def get_db_connection():
 def is_admin(user):
   return user == os.environ["ADMIN"]
 
-def get_elections_list():
+def prompt_elections_list():
   store = get_db_connection()
-  return store.db.find({"type": "election"})
+  elections = store.db.find({"type": "election"})
+  print("elections: " + elections)
+  election_actions = []
+  for election in elections:
+    election_actions.append({
+      "name": "election_name",
+      "text": election["name"],
+      "type": "button",
+      "value": election["name"]
+    })
+  election_actions.append({
+    "name": "election_name",
+    "text": "Cancel",
+    "type": "button",
+    "value": "cancel"
+  })
+  return sc.api_call(
+    "chat.postMessage",
+    channel=channel,
+    attachments=[
+    {
+      "title": "Which election do you want to start?",
+      "fallback": "I can't start an election for some reason :'(",
+      "callback_id": "start_election",
+      "color": "#3AA3E3",
+      "attachment_type": "default",
+      "actions": election_actions
+      }
+    ]
+  )
