@@ -51,7 +51,7 @@ def webhook():
         update_workflow(event["user"], "get_election_name", True)
 
       elif "election" in text:
-        send_slack_message(event["channel", "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for."])
+        send_slack_message(event["channel"], "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for.")
         subscribe_to_elections(event["user"])
 
       elif "shirt" in text or "size" in text:
