@@ -86,19 +86,31 @@ def webhook():
   return "ok", 200
 
 # Listener for updating shirt size in database
-@app.route("/update_shirt", methods=["POST"])
-def update_shirt():
+@app.route("/interactivity", methods=["POST"])
+def interactivity():
   # get shirt size and username
   payload = json.loads(request.form.get("payload"))
   log("Received {}".format(payload))
-  size = str(payload["actions"][0].get("value"))
-  userid = payload["user"]["id"]
-  email = get_email(userid)
 
-  # actually update shirt size and return the result
-  requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper(), "secretKey": secret_key})
+  def update_shirt():
+    size = str(payload["actions"][0].get("value"))
+    userid = payload["user"]["id"]
+    email = get_email(userid)
 
-  return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
+    # actually update shirt size and return the result
+    requests.post(api_url + "/member/updateshirtsize", json={"email": email, "newShirtSize": size.upper(), "secretKey": secret_key})
+
+    return "Updated t-shirt size to *" + size.upper() + "*, congratulations " + email + "!", 200
+
+  def start_election():
+    return "Started " + payload["actions"][0].get("value")
+
+  callback_actions = {
+    "update_shirt": update_shirt,
+    "start_election": start_election
+  }
+  
+  return callback_actions[payload["callback_id"]]()  
 
 # Listener for reminders
 @app.route("/remind", methods=["GET"])
@@ -325,6 +337,3 @@ def prompt_elections_list(channel):
       }
     ]
   )
-
-def start_election(name):
-  return True
