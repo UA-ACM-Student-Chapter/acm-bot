@@ -51,7 +51,7 @@ def webhook():
         send_slack_message(event["channel"], "Okay, tell me the name of the election.")
         update_workflow(event["user"], "get_election_name", True)
 
-      if event["user"] == os.environ["ADMIN"] and text == "list election users":
+      elif event["user"] == os.environ["ADMIN"] and text == "list election users":
         get_users_subscribed_to_elections(event["channel"])
 
       elif "election" in text:
