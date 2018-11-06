@@ -41,7 +41,9 @@ def webhook():
     text = str(event.get("text")).lower()
     current_workflow = get_current_user_workflow(event["user"])
     if text == "quit":
-      set_current_workflow_item_inactive(event["user"], event["channel"])
+      say_confirmation = set_current_workflow_item_inactive(event["user"], event["channel"])
+      if say_confirmation:
+        send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
@@ -246,9 +248,10 @@ def set_current_workflow_item_inactive(user, channel):
   current_workflow = get_current_user_workflow(user)
   if current_workflow != None:
     store.db.update_one({"_id": current_workflow["_id"]}, {"$set": {"active": False}})
-    send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
+    return True
   else:
     send_slack_message(channel, "I don't think we were talking about anything in particular.")
+    return False
 
 def subscribe_to_elections(user, channel):
   store = get_db_connection()
