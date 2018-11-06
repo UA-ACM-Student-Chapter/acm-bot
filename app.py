@@ -252,7 +252,9 @@ def subscribe_to_elections(user):
   doc = {"type": "election_subscription", "user": user}
   store.db.insert_one(doc)
 
-def get_users_subscribed_to_elections
+def get_users_subscribed_to_elections():
+  client = get_db_connection()
+  store.db.find()
 
 def get_db_connection():
   client = MongoClient(os.environ['MONGODB_URI'])
