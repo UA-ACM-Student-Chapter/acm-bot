@@ -46,7 +46,7 @@ def webhook():
       if say_confirmation:
         send_slack_message(event["channel"], "Okay! I forgot what we were talking about.")
       else:
-        send_slack_message(channel, "I don't think we were talking about anything in particular.")
+        send_slack_message(event["channel"], "I don't think we were talking about anything in particular.")
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
