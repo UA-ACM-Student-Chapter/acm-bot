@@ -58,7 +58,7 @@ def webhook():
         send_slack_message(channel, "Okay, tell me the name of the election.")
         update_workflow(user, "get_election_name", True)
 
-      if is_admin(user and text == "start election":
+      if is_admin(user) and text == "start election":
         prompt_elections_list(channel)
         set_current_workflow_item_inactive(user, channel)
 
