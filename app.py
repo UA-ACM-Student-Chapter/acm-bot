@@ -46,9 +46,13 @@ def webhook():
     elif current_workflow != None:
       handle_workflow(event["user"], event["channel"], text, current_workflow)
     else:
-      if text == "create election":
+      if event["user"] == os.environ["ADMIN"] and text == "create election":
         send_slack_message(event["channel"], "Okay, tell me the name of the election.")
         update_workflow(event["user"], "get_election_name", True)
+
+      elif text.contains("election"):
+        send_slack_message(event["channel", "You want to vote in the next election? Great! I'll notify you when a position is actively being voted for."])
+        subscribe_to_elections(event["user"])
 
       elif "shirt" in text or "size" in text:
         update_shirt_prompt(event["channel"])
@@ -242,6 +246,13 @@ def set_current_workflow_item_inactive(user, channel):
     store.db.update_one({"_id": current_workflow["_id"]}, {"$set": {"active": False}})
   else:
     send_slack_message(channel, "I don't think we were talking about anything in particular.")
+
+def subscribe_to_elections(user):
+  client = get_db_connection()
+  doc = {"type": "election_subscription", "user": user}
+  store.db.insert_one(doc)
+
+def get_users_subscribed_to_elections
 
 def get_db_connection():
   client = MongoClient(os.environ['MONGODB_URI'])
