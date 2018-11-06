@@ -347,3 +347,16 @@ def prompt_elections_list(channel):
       }
     ]
   )
+
+def set_election_as_active(name):
+  store = get_db_connection()
+  election = get_election(name)
+  if election != None:
+    store.db.update_one({"_id": election["_id"]}, {"$set": {"active": False}})
+    return True
+  else:
+    return False
+
+def get_election(name):
+  store = get_db_connection()
+  return store.db.find_one({"type": "election", "name": name})
