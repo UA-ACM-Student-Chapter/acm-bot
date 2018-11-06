@@ -248,12 +248,12 @@ def set_current_workflow_item_inactive(user, channel):
     send_slack_message(channel, "I don't think we were talking about anything in particular.")
 
 def subscribe_to_elections(user):
-  client = get_db_connection()
+  store = get_db_connection()
   doc = {"type": "election_subscription", "user": user}
   store.db.insert_one(doc)
 
 def get_users_subscribed_to_elections():
-  client = get_db_connection()
+  store = get_db_connection()
   store.db.find()
 
 def get_db_connection():
