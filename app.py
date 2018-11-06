@@ -322,7 +322,7 @@ def is_admin(user):
 
 def prompt_elections_list(channel):
   store = get_db_connection()
-  elections = store.db.find({"type": "election"})
+  elections = store.db.find({"type": "election"}, sort=[('_id', -1)])
   election_actions = []
   for election in elections:
     print(election)
