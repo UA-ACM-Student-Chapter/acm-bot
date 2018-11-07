@@ -269,7 +269,7 @@ def handle_workflow(user, channel, text, workflow):
     update_workflow(user, "get_position_names", True, None)
 
   def get_position_names():
-    send_slack_message(channel, "Thanks! I won't do anything with that for now. Goodbye!")
+    send_slack_message(channel, "Are these the correct positions? " + text)
     set_current_workflow_item_inactive(user, channel)
 
   def election_mode():
