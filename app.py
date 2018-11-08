@@ -316,7 +316,7 @@ def get_db_connection():
   return client.heroku_j9g2w0v4
 
 def is_admin(user):
-  return user == get_email(os.environ["ADMIN"])
+  return get_email(user) in os.environ["ADMIN"].split(" ")
 
 def prompt_elections_list(channel):
   store = get_db_connection()
