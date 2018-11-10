@@ -244,7 +244,7 @@ def create_election(name, channel):
 
 def get_registered_voters():
   store = get_db_connection()
-  return store.db.find({"type": "election_subscription"}, {"email": 1, "channel": 1}, sort=[('_id', -1)]).distinct("email")
+  return store.db.find({"type": "election_subscription"}, sort=[('_id', -1)]).distinct("channel")
 
 def update_workflow(username, state, active, data):
   store = get_db_connection()
@@ -296,7 +296,7 @@ def handle_workflow(user, channel, text, workflow):
             for voter in registered_voters:
               sc.api_call(
                 "chat.postMessage",
-                channel=voter["channel"],
+                channel=voter,
                 attachments=[
                   {
                     "title": "Who do you choose to be " + position["name"],
