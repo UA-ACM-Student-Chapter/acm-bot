@@ -117,7 +117,7 @@ def interactivity():
     doc = { 'type': 'vote', 'election_name': vote["election_name"], 'position_name': vote["position_name"], 'candidate_name': vote["candidate_name"] }
     store.db.insert_one(doc)
 
-    return "Nice! You voted for " vote["candidate_name"] " to be " + vote["position_name"] + "."
+    return "Nice! You voted for " + vote["candidate_name"] + " to be " + vote["position_name"] + "."
 
   callback_actions = {
     "update_tshirt": update_tshirt,
