@@ -113,6 +113,7 @@ def interactivity():
   def cast_vote():
     print("cast vote for")
     print(payload["actions"][0].get("value"))
+    return "U voted m8!"
 
   callback_actions = {
     "update_tshirt": update_tshirt,
@@ -308,6 +309,7 @@ def handle_workflow(user, channel, text, workflow):
                     }
                   ]
                 )
+        send_slack_message(channel, "Sent prompt!")
       except:
         send_slack_message(channel, "I think you messed up typing that *prompt* command. To prompt users to elect a position, say 'prompt \"electionName\"")
     else:
