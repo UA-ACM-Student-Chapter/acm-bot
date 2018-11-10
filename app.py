@@ -105,7 +105,7 @@ def interactivity():
 
   def start_election():
     election_name = payload["actions"][0].get("value")
-    if election_name != "cancel"
+    if election_name != "cancel":
       set_election_as_active(election_name)
       update_workflow(payload["user"]["id"], "election_mode", True, { "election_name": election_name })
       return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
