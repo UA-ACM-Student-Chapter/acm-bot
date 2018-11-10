@@ -116,10 +116,11 @@ def interactivity():
     vote = payload["actions"][0].get("value")
     print(payload)
     print(vote)
-    doc = { 'type': 'vote', 'election_name': vote["election_name"], 'position_name': vote["position_name"], 'candidate_name': vote["candidate_name"] }
+    vote_arr = vote.split(",")
+    doc = { 'type': 'vote', 'election_name': vote_arr[0], 'position_name': vote_arr[1], 'candidate_name': vote_arr[2] }
     store.db.insert_one(doc)
 
-    return "Nice! You voted for " + vote["candidate_name"] + " to be " + vote["position_name"] + "."
+    return "Nice! You voted for " + vote_arr[1] + " to be " + vote_arr[2] + "."
 
   callback_actions = {
     "update_tshirt": update_tshirt,
@@ -298,7 +299,7 @@ def handle_workflow(user, channel, text, workflow):
                 "name": "vote",
                 "text": candidate["name"],
                 "type": "button",
-                "value": { "election_name": election["name"], "position_name": position["name"], "cadidate_name": candidate["name"] }
+                "value": election["name"] + "," + position["name"] + "," + candidate["name"]
               })
             registered_voters = get_registered_voters()
             print(registered_voters)
