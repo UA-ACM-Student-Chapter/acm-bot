@@ -275,6 +275,8 @@ def handle_workflow(user, channel, text, workflow):
       prompt_arr = text.split("\"")
       try:
         position_to_prompt = prompt_arr[1]
+        print(prompt_arr)
+        print(position_to_prompt)
         election = get_election(workflow["data"]["election_name"])
         print(election)
         for position in election["positions"]:
