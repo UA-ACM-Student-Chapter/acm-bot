@@ -105,9 +105,10 @@ def interactivity():
 
   def start_election():
     election_name = payload["actions"][0].get("value")
-    set_election_as_active(election_name)
-    update_workflow(payload["user"]["id"], "election_mode", True, { "election_name": election_name })
-    return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
+    if election_name != "cancel"
+      set_election_as_active(election_name)
+      update_workflow(payload["user"]["id"], "election_mode", True, { "election_name": election_name })
+      return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
 
   def cast_vote():
     print("cast vote for")
@@ -213,7 +214,7 @@ def get_email(id):
   try:
     return payload["user"]["profile"]["email"]
   except:
-    return "failure@you"
+    return None
 
 # Returns the user ID for an email address
 def get_user(email):
@@ -243,7 +244,7 @@ def create_election(name, channel):
 
 def get_registered_voters():
   store = get_db_connection()
-  return store.db.find({"type": "election_subscription"}, sort=[('_id', -1)]).distinct("email")
+  return store.db.find({"type": "election_subscription"},{"email": 1, "channel": 1} sort=[('_id', -1)]).distinct("email")
 
 def update_workflow(username, state, active, data):
   store = get_db_connection()
