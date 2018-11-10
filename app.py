@@ -244,7 +244,7 @@ def create_election(name, channel):
 
 def get_registered_voters():
   store = get_db_connection()
-  return store.db.find({"type": "election_subscription"},{"email": 1, "channel": 1} sort=[('_id', -1)]).distinct("email")
+  return store.db.find({"type": "election_subscription"}, {"email": 1, "channel": 1}, sort=[('_id', -1)]).distinct("email")
 
 def update_workflow(username, state, active, data):
   store = get_db_connection()
