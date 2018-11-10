@@ -316,6 +316,7 @@ def get_db_connection():
 
 def is_admin(id):
   user = sc.api_call("users.info", user=id)
+  print(user)
   return user["is_admin"]
 
 def prompt_elections_list(channel):
