@@ -112,8 +112,12 @@ def interactivity():
 
   def cast_vote():
     print("cast vote for")
-    print(payload["actions"][0].get("value"))
-    return "U voted m8!"
+    store = get_db_connection()
+    vote = payload["actions"][0].get("value")
+    doc = { 'type': 'vote', 'election_name': vote["election_name"], 'position_name': vote["position_name"], 'candidate_name': vote["candidate_name"] }
+    store.db.insert_one(doc)
+
+    return "Nice! You voted for " vote["candidate_name"] " to be " + vote["position_name"] + "."
 
   callback_actions = {
     "update_tshirt": update_tshirt,
@@ -272,6 +276,8 @@ def handle_workflow(user, channel, text, workflow):
       send_slack_message(channel, "Okay, I've ended the election. Here's the results!")
       #give results
       set_current_workflow_item_inactive(user, channel)
+    elif text == "stats":
+      send_slack_message(channel, "Here's the current stats:")
     elif text.startswith("prompt \""):
       print("handling prompt")
       prompt_arr = text.split("\"")
@@ -290,7 +296,7 @@ def handle_workflow(user, channel, text, workflow):
                 "name": "vote",
                 "text": candidate["name"],
                 "type": "button",
-                "value": candidate["name"]
+                "value": { "election_name": election["name"], "position_name": position["name"], "cadidate_name": candidate["name"] }
               })
             registered_voters = get_registered_voters()
             print(registered_voters)
