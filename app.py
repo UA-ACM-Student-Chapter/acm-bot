@@ -314,10 +314,9 @@ def get_db_connection():
     return client.heroku_0hcp48pq
   return client.heroku_j9g2w0v4
 
-def is_admin(user):
-  print(user)
-  print(get_email(user))
-  return get_email(user) in os.environ["ADMIN"].split(" ")
+def is_admin(id):
+  user = sc.api_call("users.info", user=id)
+  return user["is_admin"]
 
 def prompt_elections_list(channel):
   store = get_db_connection()
