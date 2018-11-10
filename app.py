@@ -114,6 +114,7 @@ def interactivity():
     print("cast vote for")
     store = get_db_connection()
     vote = payload["actions"][0].get("value")
+    print(payload)
     print(vote)
     doc = { 'type': 'vote', 'election_name': vote["election_name"], 'position_name': vote["position_name"], 'candidate_name': vote["candidate_name"] }
     store.db.insert_one(doc)
