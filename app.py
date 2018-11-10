@@ -52,7 +52,7 @@ def webhook():
     elif current_workflow != None:
       handle_workflow(user, channel, text, current_workflow)
     else:
-      if is_admin(event["user"]) and text == "create election":
+      if is_admin(user) and text == "create election":
         send_slack_message(channel, "Okay, tell me the name of the election.")
         update_workflow(user, "get_election_name", True, None)
 
@@ -109,9 +109,14 @@ def interactivity():
     update_workflow(payload["user"]["id"], "election_mode", True, { "election_name": election_name })
     return "Started \"" + election_name + "\". *You can prompt users to vote for a position* by saying 'prompt \"position name\"'. To get the election stats, just say \"stats\". To use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\". To end the election, say 'stop election'."
 
+  def cast_vote():
+    print("cast vote for")
+    print(payload["actions"][0].get("value"))
+
   callback_actions = {
     "update_tshirt": update_tshirt,
-    "start_election": start_election
+    "start_election": start_election,
+    "cast_vote": cast_vote
   }
   
   return callback_actions[payload["callback_id"]]()  
@@ -132,20 +137,6 @@ def remind_hook():
         if dm["ok"]:
           channel = dm["channel"]["id"]
           send_slack_message(channel, "Pay your dues. :)")
-
-@app.route("/start_election", methods=["POST"])
-def start_election():
-  payload = json.loads(request.form.get("payload"))
-  log("Received {}".format(payload))
-  election_name = str(payload["actions"][0].get("value"))
-  userid = payload["user"]["id"]
-  email = get_email(payload["user"]["id"])
-
-  if is_admin(userid):
-    start_election(election_name)
-    return "Started election \"" + election_name + "\"."
-  
-  return "You're an evil, evil person trying to hack an election. Shame on you >:(."
 
 # Simple wrapper for sending a Slack message
 def send_slack_message(channel, message):
@@ -247,8 +238,12 @@ def log(msg):
 
 def create_election(name, channel):
   store = get_db_connection()
-  doc = { 'type': 'election', 'active': False, 'name': name, 'participants': [], 'positions': [] }
+  doc = { 'type': 'election', 'active': False, 'name': name, 'positions': [] }
   store.db.insert_one(doc)
+
+def get_registered_voters():
+  store = get_db_connection()
+  return store.db.find({"type": "election_subscription"}, sort=[('_id', -1)]).distinct("email")
 
 def update_workflow(username, state, active, data):
   store = get_db_connection()
@@ -264,7 +259,7 @@ def handle_workflow(user, channel, text, workflow):
     create_election(text, channel)
     send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
     set_current_workflow_item_inactive(user, channel)
-    update_workflow(user, "get_position_names", True, None)
+    update_workflow(user, "get_position_names", True, { "election_name": text })
 
   def get_position_names():
     send_slack_message(channel, "Are these the correct positions? " + text)
@@ -275,6 +270,40 @@ def handle_workflow(user, channel, text, workflow):
       send_slack_message(channel, "Okay, I've ended the election. Here's the results!")
       #give results
       set_current_workflow_item_inactive(user, channel)
+    elif text.startswith("prompt \""):
+      prompt_arr = text.split("\"")
+      try:
+        position_to_prompt = prompt_arr[1]
+        election = get_election(workflow["data"]["election_name"])
+        for position in election["positions"]:
+          if position["name"] == position_to_prompt:
+            actions = []
+            for candidate in position["candidates"]:
+              actions.append({
+                "name": "vote",
+                "text": candidate["name"],
+                "type": "button",
+                "value": candidate["name"]
+              })
+            registered_voters = get_registered_voters()
+            print(registered_voters)
+            for voter in registered_voters:
+              sc.api_call(
+                "chat.postMessage",
+                channel=voter["channel"],
+                attachments=[
+                  {
+                    "title": "Who do you choose to be " + position["name"],
+                    "fallback": "There was an error prompting you to vote for " + position["name"],
+                    "callback_id": "cast_vote",
+                    "color": "#3AA3E3",
+                    "attachment_type": "default",
+                    "actions": actions
+                    }
+                  ]
+                )
+      except:
+        send_slack_message(channel, "I think you messed up typing that *prompt* command. To prompt users to elect a position, say 'prompt \"electionName\"")
     else:
       send_slack_message(channel, "You're currently running an election. To end the election, say 'stop election'. Remember, you can prompt users to vote for a position by saying 'prompt \"position name\"'; to get the election stats, just say \"stats\"; to use the current results of a position's votes to cascade to the next available position, say 'cascade \"position name\".")
 
