@@ -284,8 +284,8 @@ def handle_workflow(user, channel, text, workflow):
       election = get_election(workflow["data"]["election_name"])
       store = get_db_connection()
       for position in election["positions"]:
-        vote_count = store.db.find({"type": "vote", "election_name": workflow["data"]["election_name"], "position": position["name"]}).distinct("voter").count()
-        send_slack_message(channel, position + ": " + vote_count)
+        votes = store.db.find({"type": "vote", "election_name": workflow["data"]["election_name"], "position": position["name"]}).distinct("voter")
+        send_slack_message(channel, position + ": " + votes.count())
 
     elif text.startswith("prompt \""):
       print("handling prompt")
