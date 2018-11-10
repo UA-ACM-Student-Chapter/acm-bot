@@ -218,13 +218,12 @@ def update_shirt_prompt(channel):
 
 # Returns the email address for a user iD
 def get_email(id):
-  userlist = sc.api_call("users.list")
-  print(userlist)
-  for member in userlist["members"]:
-    if member["id"] == id:
-      return member["profile"]["email"]
-
-  return "failure@you"
+  user = sc.api_call("users.info", user=id)
+  print(user)
+  try:
+    return user["profile"]["email"]
+  except:
+    return "failure@you"
 
 # Returns the user ID for an email address
 def get_user(email):
