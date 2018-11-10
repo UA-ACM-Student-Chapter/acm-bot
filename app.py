@@ -117,10 +117,10 @@ def interactivity():
     print(payload)
     print(vote)
     vote_arr = vote.split(",")
-    doc = { 'type': 'vote', 'election_name': vote_arr[0], 'position_name': vote_arr[1], 'candidate_name': vote_arr[2] }
+    doc = { 'type': 'vote', 'election_name': vote_arr[0], 'position_name': vote_arr[1], 'candidate_name': vote_arr[2], "voter": payload["user"]["name"]  }
     store.db.insert_one(doc)
 
-    return "Nice! You voted for " + vote_arr[1] + " to be " + vote_arr[2] + "."
+    return "Nice! You voted for " + vote_arr[2] + " to be " + vote_arr[1] + "."
 
   callback_actions = {
     "update_tshirt": update_tshirt,
@@ -281,6 +281,12 @@ def handle_workflow(user, channel, text, workflow):
       set_current_workflow_item_inactive(user, channel)
     elif text == "stats":
       send_slack_message(channel, "Here's the current stats:")
+      election = get_election(workflow["data"]["election_name"])
+      store = get_db_connection()
+      for position in election["positions"]:
+        vote_count = store.db.find({"type": "vote", "election_name": workflow["data"]["election_name"], "position": position["name"]}).distinct("voter").count()
+        send_slack_message(channel, position + ": " + vote_count)
+
     elif text.startswith("prompt \""):
       print("handling prompt")
       prompt_arr = text.split("\"")
