@@ -218,10 +218,9 @@ def update_shirt_prompt(channel):
 
 # Returns the email address for a user iD
 def get_email(id):
-  user = sc.api_call("users.info", user=id)
-  print(user)
+  payload = sc.api_call("users.info", user=id)
   try:
-    return user["profile"]["email"]
+    return payload["user"]["profile"]["email"]
   except:
     return "failure@you"
 
@@ -315,9 +314,8 @@ def get_db_connection():
   return client.heroku_j9g2w0v4
 
 def is_admin(id):
-  user = sc.api_call("users.info", user=id)
-  print(user)
-  return user["is_admin"]
+  payload = sc.api_call("users.info", user=id)
+  return payload["user"]["is_admin"]
 
 def prompt_elections_list(channel):
   store = get_db_connection()
