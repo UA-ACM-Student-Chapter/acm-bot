@@ -271,11 +271,14 @@ def handle_workflow(user, channel, text, workflow):
       #give results
       set_current_workflow_item_inactive(user, channel)
     elif text.startswith("prompt \""):
+      print("handling prompt")
       prompt_arr = text.split("\"")
       try:
         position_to_prompt = prompt_arr[1]
         election = get_election(workflow["data"]["election_name"])
+        print(election)
         for position in election["positions"]:
+          print(position)
           if position["name"] == position_to_prompt:
             actions = []
             for candidate in position["candidates"]:
@@ -315,7 +318,7 @@ def handle_workflow(user, channel, text, workflow):
 
   workflows[workflow["state"]]()
 
-  print("handled workflow" + workflow["state"])
+  print("handled workflow " + workflow["state"])
 
 def set_current_workflow_item_inactive(user, channel):
   store = get_db_connection()
