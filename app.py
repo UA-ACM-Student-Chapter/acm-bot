@@ -281,7 +281,7 @@ def handle_workflow(user, channel, text, workflow):
         print(election)
         for position in election["positions"]:
           print(position)
-          if position["name"] == position_to_prompt:
+          if position["name"].lower() == position_to_prompt:
             actions = []
             for candidate in position["candidates"]:
               actions.append({
