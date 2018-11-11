@@ -1,13 +1,13 @@
- Prompt "Please list all position names enclosed in quotation marks."
- Admin inputs something like "President" "Vice President" "Treasurer"
+Prompt "Please list all position names enclosed in quotation marks."
+Admin inputs something like "President" "Vice President" "Treasurer"
 
- Bot sends confirmation "Is this correct? President, Vice President, Treasurer?" with Yes No buttons (optional)
+Bot sends confirmation "Is this correct? President, Vice President, Treasurer?" with Yes No buttons (optional)
 
- Prompt, for each position, if it cascades to any other position
-  i.e., "Does President cascade to any of these positions?" with a Vice President and Treasurer button as options
+Prompt, for each position, if it cascades to any other position
+i.e., "Does President cascade to any of these positions?" with a Vice President and Treasurer button as options
 
- Admin clicks button responses
- Bot says "Alright, I think I got it! Here's a summary:"
- "You can start your election by saying "start [election name]"
- 
- At each prompt, the bot probably saves the new information to the database document; you don't have to wait until the very end to save to the database
+Admin clicks button responses
+Bot says "Alright, I think I got it! Here's a summary:"
+"You can start your election by saying "start [election name]"
+
+At each prompt, the bot probably saves the new information to the database document; you don't have to wait until the very end to save to the database
