@@ -7,7 +7,7 @@ import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from pymongo import MongoClient
-
+from unidecode import unidecode
 from flask import Flask, request
 from slackclient import SlackClient
 
@@ -39,7 +39,7 @@ def webhook():
     flag = flag and event["username"] != bot_name
 
   if event["type"] == "message" and flag:
-    text = str(event.get("text")).lower()
+    text = unidecode(str(event.get("text")).lower())
     user = event["user"]
     channel = event["channel"]
     current_workflow = get_current_user_workflow(user)
@@ -288,7 +288,6 @@ def handle_workflow(user, channel, text, workflow):
         for candidate in position["candidates"]:
           votes = store.db.find({"type": "vote", "election_name": workflow["data"]["election_name"], "position_name": position["name"], "candidate_name": candidate["name"]}).distinct("voter")
           send_slack_message(channel, "-" + candidate["name"] + ": " + str(len(votes)))
-
     elif text.startswith("prompt \""):
       print("handling prompt")
       prompt_arr = text.split("\"")
