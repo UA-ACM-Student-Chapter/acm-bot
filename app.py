@@ -278,7 +278,7 @@ def handle_workflow(user, channel, text, workflow):
     # split position names
     positions = text.split(",")
     for name in positions:
-      store.db.update({"_id": election["_id"]}, {"$push": {"positions": {"name": name}}})
+      store.db.update({"_id": election["_id"]}, {"positions": {"$push": {"name": name}}})
     # update workflow
     set_current_workflow_item_inactive(user, channel)
 
