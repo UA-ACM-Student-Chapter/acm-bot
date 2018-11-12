@@ -266,20 +266,12 @@ def get_current_user_workflow(user):
 def handle_workflow(user, channel, text, workflow):
   def get_election_name():
     create_election(text, channel)
-    send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: President, Vice President, Treasurer")
+    send_slack_message(channel, "Alright, can you tell me the position names for the \"" + text + "\" election? Just list them like this: \"President\" \"Vice President\" \"Treasurer\"")
     set_current_workflow_item_inactive(user, channel)
     update_workflow(user, "get_position_names", True, { "election_name": text })
 
   def get_position_names():
-    send_slack_message(channel, "Here are the position names: " + text)
-
-    # get election doc
-    election = get_election(workflow["data"]["election_name"])
-    # split position names
-    positions = text.split(",")
-    for name in positions:
-      store.db.update({"_id": election["_id"]}, {"positions": {"$push": {"name": name}}})
-    # update workflow
+    send_slack_message(channel, "Are these the correct positions? " + text)
     set_current_workflow_item_inactive(user, channel)
 
   def election_mode():
